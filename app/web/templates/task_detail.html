@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title or "SlothForm — Task Detail" }}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2226%22>🦥</text></svg>">
+</head>
+<body data-task-id="{{ task_id }}">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <a href="/" class="brand">
+        <span class="brand-logo">🦥</span>
+        <div class="brand-text">
+          <h1>SlothForm</h1>
+          <span>Autonomous Form Filling Agent</span>
+        </div>
+      </a>
+      <div class="header-actions">
+        <a href="/" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← New Application</a>
+        <div id="vault-status-badge" class="vault-badge">
+          <span class="vault-indicator"></span>
+          <span>Vault: Encrypted (AES-256)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="padding: 2rem 1rem 1.5rem 1rem;">
+      <div class="hero-tag">Task Telemetry: {{ task_id }}</div>
+      <h2 style="font-size: 1.75rem;">Autonomous Form Execution Telemetry</h2>
+      <p style="font-size: 0.9rem;">Tracking live execution stages, DOM extraction, Ultramarine reasoning, CIBA approval, and replay streaming.</p>
+    </section>
+
+    <!-- Hidden target-url-input for contract compliance -->
+    <input type="hidden" id="target-url-input" value="{{ target_url or 'https://example.com' }}">
+
+    <!-- Visual 5-Stage Progress Pipeline -->
+    <section class="pipeline-card">
+      <div class="pipeline-header">
+        <span class="pipeline-title">Task Pipeline [<code style="color: var(--amber-primary);">{{ task_id }}</code>]</span>
+        <span id="pipeline-status-text" class="pipeline-status">Streaming real-time events...</span>
+      </div>
+
+      <!-- Animated Progress Bar -->
+      <div class="progress-bar-container">
+        <div id="stage-progress-bar" class="progress-bar-fill"></div>
+      </div>
+
+      <!-- 5 Visual Stages -->
+      <div class="pipeline-stages">
+        <div id="stage-step-1" class="stage-step">
+          <div class="stage-icon">☁️</div>
+          <div class="stage-title">1. Provisioning</div>
+          <div class="stage-desc">Browserbase cloud sandbox</div>
+          <span class="stage-badge">10%</span>
+        </div>
+
+        <div id="stage-step-2" class="stage-step">
+          <div class="stage-icon">🔍</div>
+          <div class="stage-title">2. DOM Schema</div>
+          <div class="stage-desc">Form field extraction</div>
+          <span class="stage-badge">30%</span>
+        </div>
+
+        <div id="stage-step-3" class="stage-step">
+          <div class="stage-icon">🧠</div>
+          <div class="stage-title">3. Ultramarine</div>
+          <div class="stage-desc">Grounded reasoning</div>
+          <span class="stage-badge">50%</span>
+        </div>
+
+        <div id="stage-step-4" class="stage-step">
+          <div class="stage-icon">🔐</div>
+          <div class="stage-title">4. Auth0 CIBA</div>
+          <div class="stage-desc">Backchannel consent</div>
+          <span class="stage-badge">70%</span>
+        </div>
+
+        <div id="stage-step-5" class="stage-step">
+          <div class="stage-icon">🛡️</div>
+          <div class="stage-title">5. Form Fill & Guard</div>
+          <div class="stage-desc">Dry-run amber safety</div>
+          <span class="stage-badge">90-100%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Panels: Replay and Field Diff -->
+    <section class="dashboard-grid">
+      <!-- Browserbase Replay Container -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>Browserbase Cloud Session Replay</span>
+          <a id="replay-external-link" href="#" target="_blank" style="color: var(--amber-primary); font-size: 0.8rem; text-decoration: none;"></a>
+        </div>
+        <div id="replay-container" class="replay-container">
+          <iframe id="browserbase-replay-frame" class="replay-frame" src="" style="display: none;" allowfullscreen></iframe>
+          <div id="replay-placeholder" class="replay-placeholder">
+            <span style="font-size: 2.5rem;">🎬</span>
+            <p>Session replay stream connecting...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Field Diff Summary -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>Privacy Diff & Field Consent</span>
+          <button type="button" id="view-diff-btn" class="sample-chip" style="color: var(--amber-primary);">Expand Full Diff ↗</button>
+        </div>
+        <div class="diff-table-wrapper">
+          <table class="diff-table">
+            <thead>
+              <tr>
+                <th>Field Attribute</th>
+                <th>Sensitivity Tier</th>
+                <th>Populated / Masked Value</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="diff-tbody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                  Streaming task attributes...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real-Time Telemetry Terminal Feed -->
+    <section class="telemetry-card">
+      <div class="telemetry-header">
+        <div class="terminal-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <span class="telemetry-title">Server-Sent Events (SSE) Live Feed</span>
+        <span style="color: var(--text-dim); font-size: 0.7rem;">/api/tasks/{{ task_id }}/events</span>
+      </div>
+      <div id="terminal-logs" class="terminal-logs">
+        <div class="log-entry">
+          <span class="log-time">[Init]</span>
+          <span class="log-stage">&lt;LISTENER&gt;</span>
+          <span class="log-msg">Connecting to event stream for task {{ task_id }}...</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Diff Inspection Modal -->
+  <div id="diff-inspection-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button type="button" id="modal-close-btn" class="modal-close">&times;</button>
+      <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 700;">Task {{ task_id }} Consent Diff</h3>
+      <div id="modal-diff-content" style="font-size: 0.85rem; color: var(--text-muted);">
+        <p>Verified OIDC CIBA Backchannel Authorization Details (RFC 9396).</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

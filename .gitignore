@@ -101,6 +101,9 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
+# Teamwork subagent scratch
+.agents/
+
 # Browserbase / Playwright temporary data & downloads
 downloads/
 recordings/

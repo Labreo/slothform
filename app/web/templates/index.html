@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title or "SlothForm — Autonomous Privacy-Preserving Form-Filling Agent" }}</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2226%22>🦥</text></svg>">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <a href="/" class="brand">
+        <span class="brand-logo">🦥</span>
+        <div class="brand-text">
+          <h1>SlothForm</h1>
+          <span>Autonomous Form Filling Agent</span>
+        </div>
+      </a>
+      <div class="header-actions">
+        <div id="vault-status-badge" class="vault-badge">
+          <span class="vault-indicator"></span>
+          <span>Vault: Encrypted (AES-256)</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-tag">Paper Instruments Ultramarine + Browserbase + Auth0 CIBA</div>
+      <h2>Autonomous Privacy-Preserving Form Filling</h2>
+      <p>Eliminate repetitive ATS job applications and international contractor tax compliance with verified identity privacy and human-in-the-loop consent.</p>
+    </section>
+
+    <!-- Target Form Input Card -->
+    <section class="action-card">
+      <form id="fill-form">
+        <div class="form-grid">
+          <div class="input-group">
+            <span class="input-icon">🔗</span>
+            <input 
+              type="url" 
+              id="target-url-input" 
+              class="url-input" 
+              placeholder="Paste job application URL (Greenhouse, Lever, Ashby) or W-8BEN form..." 
+              required
+            >
+          </div>
+
+          <!-- Dry-Run Safety Toggle -->
+          <div class="safety-toggle-wrapper">
+            <span id="dry-run-status-text" class="toggle-label">DRY-RUN GUARD: ON</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="dry-run-toggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn-primary">
+            <span>⚡ Start Autonomous Fill</span>
+          </button>
+        </div>
+
+        <div class="quick-samples">
+          <span>Quick Test:</span>
+          <button type="button" class="sample-chip" data-url="https://boards.greenhouse.io/stripe/jobs/456789">Greenhouse (Stripe)</button>
+          <button type="button" class="sample-chip" data-url="https://jobs.lever.co/postman/senior-backend-engineer">Lever (Postman)</button>
+          <button type="button" class="sample-chip" data-url="https://jobs.ashbyhq.com/openai/systems-engineer">Ashby (OpenAI)</button>
+          <button type="button" class="sample-chip" data-url="https://compliance.example.com/forms/w-8ben/onboarding">IRS Form W-8BEN</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Visual 5-Stage Progress Pipeline -->
+    <section class="pipeline-card">
+      <div class="pipeline-header">
+        <span class="pipeline-title">Execution Pipeline</span>
+        <span id="pipeline-status-text" class="pipeline-status">Standby — Ready for target dispatch</span>
+      </div>
+
+      <!-- Animated Progress Bar -->
+      <div class="progress-bar-container">
+        <div id="stage-progress-bar" class="progress-bar-fill"></div>
+      </div>
+
+      <!-- 5 Visual Stages -->
+      <div class="pipeline-stages">
+        <div id="stage-step-1" class="stage-step">
+          <div class="stage-icon">☁️</div>
+          <div class="stage-title">1. Provisioning</div>
+          <div class="stage-desc">Browserbase cloud sandbox & stealth proxies</div>
+          <span class="stage-badge">10%</span>
+        </div>
+
+        <div id="stage-step-2" class="stage-step">
+          <div class="stage-icon">🔍</div>
+          <div class="stage-title">2. DOM Schema</div>
+          <div class="stage-desc">Interactive inputs, selects, & frames</div>
+          <span class="stage-badge">30%</span>
+        </div>
+
+        <div id="stage-step-3" class="stage-step">
+          <div class="stage-icon">🧠</div>
+          <div class="stage-title">3. Ultramarine</div>
+          <div class="stage-desc">Paper Instruments grounded reasoning</div>
+          <span class="stage-badge">50%</span>
+        </div>
+
+        <div id="stage-step-4" class="stage-step">
+          <div class="stage-icon">🔐</div>
+          <div class="stage-title">4. Auth0 CIBA</div>
+          <div class="stage-desc">OIDC backchannel human approval</div>
+          <span class="stage-badge">70%</span>
+        </div>
+
+        <div id="stage-step-5" class="stage-step">
+          <div class="stage-icon">🛡️</div>
+          <div class="stage-title">5. Form Fill & Guard</div>
+          <div class="stage-desc">Playwright execution & amber outline</div>
+          <span class="stage-badge">90-100%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard Panels: Replay and Field Diff -->
+    <section class="dashboard-grid">
+      <!-- Browserbase Replay Container -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>Browserbase Cloud Session Replay</span>
+          <a id="replay-external-link" href="#" target="_blank" style="color: var(--amber-primary); font-size: 0.8rem; text-decoration: none;"></a>
+        </div>
+        <div id="replay-container" class="replay-container">
+          <iframe id="browserbase-replay-frame" class="replay-frame" src="" style="display: none;" allowfullscreen></iframe>
+          <div id="replay-placeholder" class="replay-placeholder">
+            <span style="font-size: 2.5rem;">🎬</span>
+            <p>Remote browser session replay will stream here once the task executes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Field Diff Summary -->
+      <div class="panel-card">
+        <div class="panel-title">
+          <span>Privacy Diff & Field Consent</span>
+          <button type="button" id="view-diff-btn" class="sample-chip" style="color: var(--amber-primary);">Expand Full Diff ↗</button>
+        </div>
+        <div class="diff-table-wrapper">
+          <table class="diff-table">
+            <thead>
+              <tr>
+                <th>Field Attribute</th>
+                <th>Sensitivity Tier</th>
+                <th>Populated / Masked Value</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="diff-tbody">
+              <tr>
+                <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                  Awaiting form analysis... Start a fill task to inspect candidate attribute releases.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real-Time Telemetry Terminal Feed -->
+    <section class="telemetry-card">
+      <div class="telemetry-header">
+        <div class="terminal-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+        </div>
+        <span class="telemetry-title">Server-Sent Events (SSE) Live Telemetry</span>
+        <span style="color: var(--text-dim); font-size: 0.7rem;">/api/tasks/{task_id}/events</span>
+      </div>
+      <div id="terminal-logs" class="terminal-logs">
+        <div class="log-entry">
+          <span class="log-time">[Ready]</span>
+          <span class="log-stage">&lt;IDLE&gt;</span>
+          <span class="log-msg">SlothForm telemetry daemon active. Ready to ingest application URLs.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Diff Inspection Modal -->
+  <div id="diff-inspection-modal" class="modal-overlay">
+    <div class="modal-content">
+      <button type="button" id="modal-close-btn" class="modal-close">&times;</button>
+      <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 700;">RFC 9396 Rich Authorization Request (RAR) Diff</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+        Inspecting full identity attribute releases versus redacted sensitive tax and banking values protected by Auth0 Token Vault.
+      </p>
+
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
+        <h4 style="font-size: 0.9rem; color: var(--emerald-success); margin-bottom: 0.5rem;">✓ Permitted Release (Candidate Core & Career)</h4>
+        <ul style="font-size: 0.8rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
+          <li>Full Name: Arjun Sharma (Tier: PUBLIC)</li>
+          <li>Email: arjun.sharma@example.com (Tier: PUBLIC)</li>
+          <li>Phone: *********3210 (Tier: SEMI_SENSITIVE, Masked)</li>
+          <li>Resume: synthetic_resume.pdf (Tier: SEMI_SENSITIVE, Synthetic verified)</li>
+          <li>Custom Essay: Tailored without hallucinated experience (Tier: SEMI_SENSITIVE)</li>
+        </ul>
+      </div>
+
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
+        <h4 style="font-size: 0.9rem; color: var(--rose-danger); margin-bottom: 0.5rem;">🔒 Redacted / Context Prohibited Attributes</h4>
+        <ul style="font-size: 0.8rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
+          <li>Indian PAN / SSN: Strictly blocked on ATS job applications (Tier: CRITICAL_TAX)</li>
+          <li>Bank Account & Routing: Strictly blocked on ATS job applications (Tier: CRITICAL_FINANCIAL)</li>
+          <li>Date of Birth: Redacted on ATS applications to prevent discrimination (Tier: CRITICAL_TAX)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
