@@ -96,6 +96,35 @@ class Auth0CIBAClient:
         if self._owns_http_client and self._http_client is not None and not self._http_client.is_closed:
             await self._http_client.aclose()
 
+    def initiate_local_fallback(
+        self, target_url: str, diff: FormFillDiff, dry_run: bool = False
+    ) -> CIBARequest:
+        """Create an in-memory CIBA backchannel request for local/dashboard consent tracking."""
+        binding_msg = generate_binding_message(target_url, diff.digest, dry_run=dry_run)
+        auth_req_id = f"ciba_sim_{uuid.uuid4().hex[:16]}"
+        self._sim_requests[auth_req_id] = {
+            "state": CIBAState.PENDING,
+            "poll_count": 0,
+            "pending_cycles": 1,
+            "slow_down_cycles": 0,
+            "final_decision": "approved",
+            "diff": diff,
+            "target_url": target_url,
+            "created_at": time.time(),
+            "expires_in": 300,
+            "interval": self.DEFAULT_POLL_INTERVAL_SEC,
+            "binding_message": binding_msg,
+            "access_token": f"eyJhbGciOiJSUzI1NiJ9.simulated_token_{uuid.uuid4().hex[:12]}",
+        }
+        logger.info("CIBA Simulator initiated request: %s (binding: %s)", auth_req_id, binding_msg)
+        return CIBARequest(
+            auth_req_id=auth_req_id,
+            expires_in=300,
+            interval=self.DEFAULT_POLL_INTERVAL_SEC,
+            binding_message=binding_msg,
+            target_url=target_url,
+        )
+
     async def initiate_consent(
         self, target_url: str, diff: FormFillDiff, dry_run: bool = False
     ) -> CIBARequest:
@@ -109,29 +138,7 @@ class Auth0CIBAClient:
         rar_json = json.dumps([rar_detail.model_dump()])
 
         if self.offline_mode:
-            auth_req_id = f"ciba_sim_{uuid.uuid4().hex[:16]}"
-            self._sim_requests[auth_req_id] = {
-                "state": CIBAState.PENDING,
-                "poll_count": 0,
-                "pending_cycles": 1,
-                "slow_down_cycles": 0,
-                "final_decision": "approved",
-                "diff": diff,
-                "target_url": target_url,
-                "created_at": time.time(),
-                "expires_in": 300,
-                "interval": self.DEFAULT_POLL_INTERVAL_SEC,
-                "binding_message": binding_msg,
-                "access_token": f"eyJhbGciOiJSUzI1NiJ9.simulated_token_{uuid.uuid4().hex[:12]}",
-            }
-            logger.info("CIBA Simulator initiated request: %s (binding: %s)", auth_req_id, binding_msg)
-            return CIBARequest(
-                auth_req_id=auth_req_id,
-                expires_in=300,
-                interval=self.DEFAULT_POLL_INTERVAL_SEC,
-                binding_message=binding_msg,
-                target_url=target_url,
-            )
+            return self.initiate_local_fallback(target_url, diff, dry_run=dry_run)
 
         # Real Auth0 Backchannel Authentication endpoint
         bc_url = f"https://{self.domain}/bc-authorize"
@@ -180,7 +187,7 @@ class Auth0CIBAClient:
         - {"status": "access_denied", "error_description": "..."}
         - {"status": "expired_token", "error_description": "..."}
         """
-        if self.offline_mode:
+        if self.offline_mode or auth_req_id in self._sim_requests:
             sim = self._sim_requests.get(auth_req_id)
             if not sim:
                 return {"status": "expired_token", "error_description": "Unknown or expired simulation ID"}

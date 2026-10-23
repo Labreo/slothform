@@ -250,17 +250,31 @@ class FillOrchestrator:
             )
 
             # Initiate CIBA Backchannel Authorization
-            if inspect.iscoroutinefunction(self.auth0_client.initiate_consent):
-                ciba_req = await self.auth0_client.initiate_consent(
-                    target_url=target_url,
-                    diff=diff,
-                    dry_run=dry_run,
-                )
-            else:
-                ciba_req = self.auth0_client.initiate_consent(
-                    target_url=target_url,
-                    diff=diff,
-                )
+            try:
+                if inspect.iscoroutinefunction(self.auth0_client.initiate_consent):
+                    ciba_req = await self.auth0_client.initiate_consent(
+                        target_url=target_url,
+                        diff=diff,
+                        dry_run=dry_run,
+                    )
+                else:
+                    ciba_req = self.auth0_client.initiate_consent(
+                        target_url=target_url,
+                        diff=diff,
+                    )
+            except Exception as ciba_init_err:
+                if hasattr(self.auth0_client, "initiate_local_fallback"):
+                    logger.warning(
+                        f"Live Auth0 /bc-authorize unavailable on tenant ({ciba_init_err}); "
+                        "falling back to in-app CIBA consent gate."
+                    )
+                    ciba_req = self.auth0_client.initiate_local_fallback(
+                        target_url=target_url,
+                        diff=diff,
+                        dry_run=dry_run,
+                    )
+                else:
+                    raise
 
             self.current_auth_req_id = ciba_req.auth_req_id
 

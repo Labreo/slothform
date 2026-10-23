@@ -92,13 +92,35 @@ class BrowserbaseService:
                 record_session=True,
                 log_session=True,
             )
-            resp = self.client.sessions.create(
-                project_id=self.project_id,
-                proxies=proxies,
-                keep_alive=keep_alive,
-                browser_settings=browser_settings,
-                api_timeout=timeout,
-            )
+            try:
+                resp = self.client.sessions.create(
+                    project_id=self.project_id,
+                    proxies=proxies,
+                    keep_alive=keep_alive,
+                    browser_settings=browser_settings,
+                    api_timeout=timeout,
+                )
+            except Exception as plan_err:
+                err_text = str(plan_err).lower()
+                if (proxies or keep_alive) and (
+                    "402" in err_text
+                    or "proxies" in err_text
+                    or "free plan" in err_text
+                    or "keep_alive" in err_text
+                ):
+                    logger.warning(
+                        f"Browserbase plan does not include residential proxies/keep_alive ({plan_err}); "
+                        "retrying live cloud session creation with proxies=False."
+                    )
+                    resp = self.client.sessions.create(
+                        project_id=self.project_id,
+                        proxies=False,
+                        keep_alive=False,
+                        browser_settings=browser_settings,
+                        api_timeout=timeout,
+                    )
+                else:
+                    raise
             session = BrowserbaseSession(
                 id=resp.id,
                 connect_url=resp.connect_url,

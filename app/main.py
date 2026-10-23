@@ -92,6 +92,12 @@ async def lifespan(app: FastAPI):
     vault_path = os.path.dirname(settings.VAULT_FILE_PATH)
     if vault_path:
         os.makedirs(vault_path, exist_ok=True)
+    vault_mgr = VaultManager()
+    if not vault_mgr.is_locked and not vault_mgr.is_initialized():
+        try:
+            vault_mgr.save_profile(create_sample_profile())
+        except Exception as e:
+            logger.warning(f"Could not bootstrap default vault on startup: {e}")
     yield
 
 
