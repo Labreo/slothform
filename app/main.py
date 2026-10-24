@@ -389,17 +389,35 @@ async def record_task_consent(task_id: str, req: ConsentDecisionRequest):
             and auth_req_id in client._sim_requests
         ):
             if req.approved:
-                client.simulate_approval(auth_req_id)
+                res = client.simulate_approval(auth_req_id)
+                if inspect.isawaitable(res):
+                    await res
             else:
-                client.simulate_denial(auth_req_id)
+                res = client.simulate_denial(auth_req_id)
+                if inspect.isawaitable(res):
+                    await res
         elif hasattr(client, "simulate_approval"):
             for req_id in list(getattr(client, "_sim_requests", {}).keys()):
                 if req.approved:
-                    client.simulate_approval(req_id)
+                    res = client.simulate_approval(req_id)
+                    if inspect.isawaitable(res):
+                        await res
                 else:
-                    client.simulate_denial(req_id)
+                    res = client.simulate_denial(req_id)
+                    if inspect.isawaitable(res):
+                        await res
 
     tasks_db[task_id]["consent_decision"] = req.approved
+    broadcast_event(
+        task_id,
+        {
+            "stage": "CIBA_CONSENT",
+            "percentage": 75,
+            "message": f"CIBA backchannel consent decision recorded: {'APPROVED' if req.approved else 'REJECTED'}",
+            "timestamp": time.time(),
+            "consent_approved": req.approved,
+        },
+    )
     return {
         "task_id": task_id,
         "approved": req.approved,

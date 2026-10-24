@@ -925,6 +925,316 @@ input:checked + .toggle-slider:before {
 }
 
 /* ==========================================================================
+   Secondary Buttons & Utilities (Refero Styles Specs)
+   ========================================================================== */
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--color-obsidian-edge);
+  border-radius: var(--radius-full);
+  padding: 0.55rem 1.15rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+
+.btn-ghost:hover {
+  background: var(--color-cobalt-panel);
+  border-color: var(--color-pulse-violet);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-accent {
+  background: var(--gradient-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 0.75rem 1.45rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 16px rgba(48, 95, 189, 0.35);
+}
+
+.btn-accent:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(98, 95, 255, 0.45);
+}
+
+.replay-link {
+  color: var(--amber-primary);
+  font-size: 0.8rem;
+  text-decoration: none;
+  font-family: var(--font-mono);
+  transition: var(--transition);
+}
+
+.replay-link:hover {
+  color: var(--amber-hover);
+  text-decoration: underline;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--emerald-success);
+  box-shadow: 0 0 10px var(--emerald-success);
+  display: inline-block;
+  animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+.panel-title-text {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+/* CRT Scanline Effect on Session Replay */
+.crt-screen {
+  position: relative;
+}
+
+.crt-screen::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  z-index: 2;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* ==========================================================================
+   Target Form Card (Task Detail View)
+   ========================================================================== */
+
+.target-card {
+  background: var(--color-deep-sea);
+  border: 1px solid var(--color-obsidian-edge);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-command);
+}
+
+.target-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.target-label {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--color-frosted-lilac);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.target-url-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-abyss);
+  border: 1px solid var(--color-inkline);
+  padding: 0.75rem 1.15rem;
+  border-radius: var(--radius-full);
+}
+
+.url-icon {
+  font-size: 1rem;
+}
+
+.target-url-link {
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.target-url-link:hover {
+  color: var(--color-frosted-lilac);
+}
+
+/* ==========================================================================
+   Auth0 CIBA Human-In-The-Loop Consent Card
+   ========================================================================== */
+
+.consent-decision-card {
+  background: linear-gradient(180deg, #101628 0%, #0d172b 100%);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 35px rgba(245, 158, 11, 0.15), var(--shadow-command);
+  animation: slide-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.consent-decision-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--amber-primary), #fbbf24, transparent);
+}
+
+.consent-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.consent-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.consent-badge-icon {
+  font-size: 1.6rem;
+}
+
+.consent-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  margin-bottom: 0.25rem;
+}
+
+.consent-subtitle {
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  font-weight: 300;
+}
+
+.consent-status-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--amber-surface);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--amber-primary);
+  padding: 0.3rem 0.85rem;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.consent-attributes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.consent-attr-box {
+  background: var(--color-abyss);
+  border: 1px solid var(--color-inkline);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+}
+
+.consent-permitted {
+  border-left: 3px solid var(--emerald-success);
+}
+
+.consent-prohibited {
+  border-left: 3px solid var(--rose-danger);
+}
+
+.attr-box-title {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.consent-permitted .attr-box-title {
+  color: var(--emerald-success);
+}
+
+.consent-prohibited .attr-box-title {
+  color: var(--rose-danger);
+}
+
+.attr-box-desc {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  font-weight: 300;
+  line-height: 1.5;
+}
+
+.consent-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.btn-consent-approve {
+  background: #ffffff;
+  color: #0b0c0e;
+  font-weight: 600;
+}
+
+.btn-consent-approve:hover:not(:disabled) {
+  background: #e6f9f0;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn-consent-reject {
+  color: var(--rose-danger);
+  border-color: rgba(244, 63, 94, 0.35);
+}
+
+.btn-consent-reject:hover:not(:disabled) {
+  background: var(--rose-surface);
+  border-color: var(--rose-danger);
+  color: #ffffff;
+}
+
+/* ==========================================================================
    Responsive Adaptations
    ========================================================================== */
 
@@ -936,6 +1246,9 @@ input:checked + .toggle-slider:before {
     grid-column: span 2;
   }
   .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .consent-attributes-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -952,5 +1265,9 @@ input:checked + .toggle-slider:before {
   }
   .hero h2 {
     font-size: 2rem;
+  }
+  .consent-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }

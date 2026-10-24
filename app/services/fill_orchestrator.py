@@ -284,9 +284,13 @@ class FillOrchestrator:
             )
             if effective_auto_approve:
                 if hasattr(self.auth0_client, "simulate_approval"):
-                    self.auth0_client.simulate_approval(ciba_req.auth_req_id)
+                    sim_res = self.auth0_client.simulate_approval(ciba_req.auth_req_id)
+                    if inspect.isawaitable(sim_res):
+                        await sim_res
                 elif hasattr(self.auth0_client, "set_user_action"):
-                    self.auth0_client.set_user_action(ciba_req.auth_req_id, "approve")
+                    action_res = self.auth0_client.set_user_action(ciba_req.auth_req_id, "approve")
+                    if inspect.isawaitable(action_res):
+                        await action_res
 
             # Poll for consent: raises RefusalToSubmitError on rejection or timeout
             if inspect.iscoroutinefunction(self.auth0_client.poll_consent):

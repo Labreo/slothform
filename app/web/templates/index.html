@@ -131,15 +131,55 @@
       </div>
     </section>
 
+    <!-- Interactive Auth0 CIBA Consent Decision Card -->
+    <section id="ciba-consent-card" class="consent-decision-card" style="display: none;">
+      <div class="consent-header">
+        <div class="consent-title-group">
+          <span class="consent-badge-icon">🔐</span>
+          <div>
+            <h3 class="consent-title">Auth0 CIBA Consent Required (RFC 9396 RAR)</h3>
+            <p class="consent-subtitle">Human-in-the-loop authorization requested for Candidate Identity Release.</p>
+          </div>
+        </div>
+        <div id="ciba-timer-badge" class="consent-status-badge">Awaiting Candidate Decision</div>
+      </div>
+
+      <div class="consent-attributes-grid">
+        <div class="consent-attr-box consent-permitted">
+          <div class="attr-box-title">✓ Permitted Release (Candidate Core & Career)</div>
+          <p class="attr-box-desc">Full Name, Email, Masked Phone, Tailored Experience Essay, Synthetic Resume PDF.</p>
+        </div>
+        <div class="consent-attr-box consent-prohibited">
+          <div class="attr-box-title">🔒 Protected & Withheld (Auth0 Token Vault)</div>
+          <p class="attr-box-desc">Indian PAN / SSN, Banking details, Date of Birth strictly redacted from ATS release.</p>
+        </div>
+      </div>
+
+      <div class="consent-actions-row">
+        <button type="button" id="ciba-approve-btn" class="btn-primary btn-consent-approve">
+          <span>✓ Authorize Identity Release</span>
+        </button>
+        <button type="button" id="ciba-reject-btn" class="btn-ghost btn-consent-reject">
+          <span>✗ Deny Consent & Halt</span>
+        </button>
+        <button type="button" id="ciba-inspect-modal-btn" class="btn-ghost">
+          <span>Inspect Full Diff ↗</span>
+        </button>
+      </div>
+    </section>
+
     <!-- Dashboard Panels: Replay and Field Diff -->
     <section class="dashboard-grid">
       <!-- Browserbase Replay Container -->
       <div class="panel-card">
         <div class="panel-title">
-          <span>Browserbase Cloud Session Replay</span>
-          <a id="replay-external-link" href="#" target="_blank" style="color: var(--amber-primary); font-size: 0.8rem; text-decoration: none;"></a>
+          <div class="panel-title-text">
+            <span>Browserbase Cloud Session Replay</span>
+            <span id="replay-live-dot" class="live-dot" style="display: none;"></span>
+          </div>
+          <a id="replay-external-link" href="#" target="_blank" class="replay-link"></a>
         </div>
-        <div id="replay-container" class="replay-container">
+        <div id="replay-container" class="replay-container crt-screen">
           <iframe id="browserbase-replay-frame" class="replay-frame" src="" style="display: none;" allowfullscreen></iframe>
           <div id="replay-placeholder" class="replay-placeholder">
             <span style="font-size: 2.5rem;">🎬</span>
@@ -152,7 +192,7 @@
       <div class="panel-card">
         <div class="panel-title">
           <span>Privacy Diff & Field Consent</span>
-          <button type="button" id="view-diff-btn" class="sample-chip" style="color: var(--amber-primary);">Expand Full Diff ↗</button>
+          <button type="button" id="view-diff-btn" class="btn-ghost" style="color: var(--amber-primary);">Expand Full Diff ↗</button>
         </div>
         <div class="diff-table-wrapper">
           <table class="diff-table">
@@ -227,6 +267,12 @@
       </div>
 
       <div id="modal-diff-content"></div>
+
+      <div class="modal-footer-actions" id="modal-consent-actions" style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: flex-end; border-top: 1px solid var(--color-inkline); padding-top: 1.25rem;">
+        <button type="button" id="modal-close-action-btn" class="btn-ghost" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">Close</button>
+        <button type="button" id="modal-reject-btn" class="btn-ghost" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; color: var(--rose-danger); border-color: rgba(244, 63, 94, 0.4); display: none;">✗ Deny Release</button>
+        <button type="button" id="modal-approve-btn" class="btn-primary" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; display: none;">✓ Approve Release</button>
+      </div>
     </div>
   </div>
 

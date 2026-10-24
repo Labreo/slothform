@@ -1,6 +1,7 @@
 /**
  * SlothForm Web Dashboard Application
  * Connects to FastAPI REST backend and streams real-time SSE telemetry.
+ * Sourced from Refero Styles AgentQL Design System.
  */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,12 +15,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const terminalLogs = document.getElementById("terminal-logs");
   const replayContainer = document.getElementById("replay-container");
   const replayFrame = document.getElementById("browserbase-replay-frame");
+  const replayLiveDot = document.getElementById("replay-live-dot");
   const diffTbody = document.getElementById("diff-tbody");
   const diffModal = document.getElementById("diff-inspection-modal");
   const modalCloseBtn = document.getElementById("modal-close-btn");
+  const modalCloseActionBtn = document.getElementById("modal-close-action-btn");
   const viewDiffBtn = document.getElementById("view-diff-btn");
 
+  // CIBA Consent Elements
+  const cibaConsentCard = document.getElementById("ciba-consent-card");
+  const cibaTimerBadge = document.getElementById("ciba-timer-badge");
+  const cibaApproveBtn = document.getElementById("ciba-approve-btn");
+  const cibaRejectBtn = document.getElementById("ciba-reject-btn");
+  const cibaInspectModalBtn = document.getElementById("ciba-inspect-modal-btn");
+  const modalApproveBtn = document.getElementById("modal-approve-btn");
+  const modalRejectBtn = document.getElementById("modal-reject-btn");
+
   let activeEventSource = null;
+  let currentActiveTaskId = null;
 
   // Toggle dry run label
   if (dryRunToggle && dryRunLabel) {
@@ -34,33 +47,106 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Quick fill sample chips
-  document.querySelectorAll(".sample-chip").forEach((chip) => {
+  // Quick fill sample chips (scoped strictly to .quick-samples)
+  document.querySelectorAll(".quick-samples .sample-chip").forEach((chip) => {
     chip.addEventListener("click", () => {
       const sampleUrl = chip.getAttribute("data-url");
       if (sampleUrl && targetUrlInput) {
         targetUrlInput.value = sampleUrl;
+        targetUrlInput.focus();
+        chip.style.transform = "scale(0.96)";
+        setTimeout(() => {
+          chip.style.transform = "";
+        }, 150);
       }
     });
   });
 
   // Modal Handlers
-  if (viewDiffBtn && diffModal) {
-    viewDiffBtn.addEventListener("click", () => {
+  function openDiffModal() {
+    if (diffModal) {
       diffModal.classList.add("active");
-    });
+    }
   }
-  if (modalCloseBtn && diffModal) {
-    modalCloseBtn.addEventListener("click", () => {
+
+  function closeDiffModal() {
+    if (diffModal) {
       diffModal.classList.remove("active");
-    });
+    }
+  }
+
+  if (viewDiffBtn) {
+    viewDiffBtn.addEventListener("click", openDiffModal);
+  }
+  if (cibaInspectModalBtn) {
+    cibaInspectModalBtn.addEventListener("click", openDiffModal);
+  }
+  if (modalCloseBtn) {
+    modalCloseBtn.addEventListener("click", closeDiffModal);
+  }
+  if (modalCloseActionBtn) {
+    modalCloseActionBtn.addEventListener("click", closeDiffModal);
   }
   if (diffModal) {
     diffModal.addEventListener("click", (e) => {
       if (e.target === diffModal) {
-        diffModal.classList.remove("active");
+        closeDiffModal();
       }
     });
+  }
+
+  // Interactive CIBA Consent Decision Submissions
+  async function submitConsentDecision(approved) {
+    if (!currentActiveTaskId) return;
+
+    if (cibaApproveBtn) cibaApproveBtn.disabled = true;
+    if (cibaRejectBtn) cibaRejectBtn.disabled = true;
+    if (modalApproveBtn) modalApproveBtn.disabled = true;
+    if (modalRejectBtn) modalRejectBtn.disabled = true;
+
+    if (cibaTimerBadge) {
+      cibaTimerBadge.textContent = approved
+        ? "Decision: Approved — Resuming Form Fill..."
+        : "Decision: Denied — Halting Pipeline...";
+      cibaTimerBadge.style.color = approved ? "var(--emerald-success)" : "var(--rose-danger)";
+    }
+
+    try {
+      const response = await fetch(`/api/tasks/${currentActiveTaskId}/consent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ approved }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to record CIBA consent decision on backend");
+      }
+
+      appendLog(
+        "CIBA",
+        `Human-in-the-loop consent ${approved ? "GRANTED" : "REFUSED"} for task ${currentActiveTaskId}`
+      );
+      closeDiffModal();
+    } catch (err) {
+      appendLog("ERROR", `Consent submission error: ${err.message}`);
+      if (cibaApproveBtn) cibaApproveBtn.disabled = false;
+      if (cibaRejectBtn) cibaRejectBtn.disabled = false;
+      if (modalApproveBtn) modalApproveBtn.disabled = false;
+      if (modalRejectBtn) modalRejectBtn.disabled = false;
+    }
+  }
+
+  if (cibaApproveBtn) {
+    cibaApproveBtn.addEventListener("click", () => submitConsentDecision(true));
+  }
+  if (cibaRejectBtn) {
+    cibaRejectBtn.addEventListener("click", () => submitConsentDecision(false));
+  }
+  if (modalApproveBtn) {
+    modalApproveBtn.addEventListener("click", () => submitConsentDecision(true));
+  }
+  if (modalRejectBtn) {
+    modalRejectBtn.addEventListener("click", () => submitConsentDecision(false));
   }
 
   // Stage steps
@@ -90,9 +176,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     if (progressBar) {
       progressBar.style.width = "0%";
+      progressBar.style.backgroundColor = "";
     }
     if (terminalLogs) {
       terminalLogs.innerHTML = "";
+    }
+    if (cibaConsentCard) {
+      cibaConsentCard.style.display = "none";
+    }
+    if (replayLiveDot) {
+      replayLiveDot.style.display = "none";
     }
   }
 
@@ -137,6 +230,17 @@ document.addEventListener("DOMContentLoaded", () => {
         if (el) el.classList.add("completed");
       });
     }
+
+    // Trigger CIBA interactive card
+    if (stage === "CIBA_CONSENT") {
+      if (cibaConsentCard) {
+        cibaConsentCard.style.display = "block";
+        if (cibaApproveBtn) cibaApproveBtn.disabled = false;
+        if (cibaRejectBtn) cibaRejectBtn.disabled = false;
+      }
+      if (modalApproveBtn) modalApproveBtn.style.display = "inline-flex";
+      if (modalRejectBtn) modalRejectBtn.style.display = "inline-flex";
+    }
   }
 
   function escapeHtml(str) {
@@ -168,6 +272,10 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (statusText) {
         statusText.textContent = "Initiating cloud sandbox...";
+        statusText.style.color = "var(--amber-primary)";
+      }
+      if (replayLiveDot) {
+        replayLiveDot.style.display = "inline-block";
       }
 
       try {
@@ -184,6 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const data = await response.json();
         const taskId = data.task_id;
+        currentActiveTaskId = taskId;
         appendLog("DISPATCH", `Task created: ${taskId} (dry_run=${isDryRun})`);
 
         // Connect SSE telemetry stream
@@ -198,13 +307,21 @@ document.addEventListener("DOMContentLoaded", () => {
           submitBtn.disabled = false;
           submitBtn.textContent = "Start Autonomous Fill";
         }
+        if (replayLiveDot) {
+          replayLiveDot.style.display = "none";
+        }
       }
     });
   }
 
   function connectTelemetryStream(taskId, isDryRun) {
+    currentActiveTaskId = taskId;
     if (activeEventSource) {
       activeEventSource.close();
+    }
+
+    if (replayLiveDot) {
+      replayLiveDot.style.display = "inline-block";
     }
 
     const eventSource = new EventSource(`/api/tasks/${taskId}/events`);
@@ -274,6 +391,17 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.textContent = "Start Autonomous Fill";
     }
 
+    if (replayLiveDot) {
+      replayLiveDot.style.display = "none";
+    }
+
+    if (cibaConsentCard) {
+      if (cibaTimerBadge) {
+        cibaTimerBadge.textContent = "✓ Identity Released (RFC 9396 Approved)";
+        cibaTimerBadge.style.color = "var(--emerald-success)";
+      }
+    }
+
     // Embed replay
     const replayUrl =
       result.replay_url ||
@@ -309,6 +437,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (submitBtn) {
       submitBtn.disabled = false;
       submitBtn.textContent = "Start Autonomous Fill";
+    }
+    if (replayLiveDot) {
+      replayLiveDot.style.display = "none";
     }
     if (diffTbody && (!diffTbody.children.length || diffTbody.textContent.includes("Streaming"))) {
       diffTbody.innerHTML = `
@@ -381,7 +512,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const modalDiffContent = document.getElementById("modal-diff-content");
     if (modalDiffContent && items.length > 0) {
-      modalDiffContent.innerHTML = `<pre style="font-family: var(--font-mono); font-size: 0.8rem; overflow-x: auto; background: var(--bg-tertiary); padding: 1rem; border-radius: 6px; border: 1px solid var(--border-subtle);">${escapeHtml(JSON.stringify(items, null, 2))}</pre>`;
+      modalDiffContent.innerHTML = `<pre style="font-family: var(--font-mono); font-size: 0.8rem; overflow-x: auto; background: var(--color-abyss); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--color-inkline);">${escapeHtml(JSON.stringify(items, null, 2))}</pre>`;
     }
   }
 
@@ -391,10 +522,34 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelector("[data-task-id]")?.getAttribute("data-task-id") ||
     (typeof currentTaskId !== "undefined" ? currentTaskId : null);
   if (pageTaskId) {
+    currentActiveTaskId = pageTaskId;
+    // Pre-fetch task details immediately for fast rendering
+    fetch(`/api/tasks/${pageTaskId}`)
+      .then((res) => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then((task) => {
+        if (!task) return;
+        if (task.status === "completed") {
+          updatePipelineStage("COMPLETED", 100);
+          handleCompletion(pageTaskId, task.result || task, true);
+        } else if (task.status === "failed" || task.status === "refused") {
+          handleFailure(task.error || `Task halted with status: ${task.status}`, task.status.toUpperCase());
+        } else if (task.current_stage) {
+          updatePipelineStage(task.current_stage, task.progress_percentage || 50);
+          if (task.diff) {
+            populateDiffTable({ diff: task.diff });
+          }
+        }
+      })
+      .catch(() => {});
+
     connectTelemetryStream(pageTaskId, true);
   }
 
   // Expose methods for external scripts or unit tests
   window.connectTelemetryStream = connectTelemetryStream;
   window.populateDiffTable = populateDiffTable;
+  window.submitConsentDecision = submitConsentDecision;
 });
