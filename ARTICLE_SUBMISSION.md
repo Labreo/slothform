@@ -16,10 +16,10 @@ You hand SlothForm any job application or tax document link. A headless cloud br
 
 Security remains paramount. The agent pauses before submission and triggers a mobile consent request. Your phone displays an exact diff of the answers. Once you tap approve, the agent fills the inputs and hands you a video recording of the run.
 
-<!-- SCREENSHOT 1 PLACEHOLDER: Main SlothForm Web Dashboard
-INSTRUCTIONS: Capture a desktop screenshot of https://slothform.onrender.com/ showing the dark command center interface, the target URL input box, and the vault status badges.
+<!-- SCREENSHOT 1: Main SlothForm Web Dashboard
+File on disk: docs/screenshots/slothform_dashboard_live.png
 -->
-<!-- ![SlothForm Dashboard](https://your-image-url-here.png) -->
+![SlothForm Command Center](https://raw.githubusercontent.com/Labreo/slothform/main/docs/screenshots/slothform_dashboard_live.png)
 
 ## Demo
 
@@ -34,10 +34,10 @@ Example: {% embed https://browserbase.com/sessions/your-session-id %}
 -->
 <!-- {% embed https://your-demo-video-link-here %} -->
 
-<!-- SCREENSHOT 2 PLACEHOLDER: Mobile CIBA Consent Prompt
-INSTRUCTIONS: Take a screenshot of the Auth0 CIBA approval card showing the field-by-field diff and the "Authorize Release" button.
+<!-- SCREENSHOT 2: Mobile CIBA Consent Prompt
+File on disk: docs/screenshots/auth0_ciba_consent_prompt.png
 -->
-<!-- ![Auth0 CIBA Approval Card](https://your-image-url-here.png) -->
+![Auth0 CIBA Approval Card](https://raw.githubusercontent.com/Labreo/slothform/main/docs/screenshots/auth0_ciba_consent_prompt.png)
 
 ## Code
 
@@ -78,10 +78,10 @@ Before touching any submission trigger, the agent initiates an asynchronous Back
 ### 4. Dry-Run Safety Guard
 During dry-run runs, SlothForm paints an amber border around submit buttons. It cancels outbound mutation requests and captures a full-page screenshot without finalizing the submission.
 
-<!-- SCREENSHOT 3 PLACEHOLDER: Amber Dry-Run Safety Capture
-INSTRUCTIONS: Insert the screenshot generated in artifacts/screenshots/ showing the amber border around the submit button.
+<!-- SCREENSHOT 3: Amber Dry-Run Safety Capture
+File on disk: docs/screenshots/dry_run_amber_safety_capture.png
 -->
-<!-- ![Dry Run Safety Screenshot](https://your-image-url-here.png) -->
+![Dry Run Safety Screenshot](https://raw.githubusercontent.com/Labreo/slothform/main/docs/screenshots/dry_run_amber_safety_capture.png)
 
 ## Why Does Open Innovation Matter?
 
@@ -93,12 +93,9 @@ Open foundation models keep your data inside an encrypted perimeter that you dir
 
 ## My Agent Session
 
-<!-- AGENT SESSION PLACEHOLDER: DevRelay Transcript
-INSTRUCTIONS: If you recorded your build session with DevRelay, embed the session tag below:
-{% agent_session your-session-id %}
-Or link directly to your agent log.
--->
-<!-- {% agent_session your-session-id-here %} -->
+{% agent_session building-slothform-autonomous-ats-form-filling-with-browserbase-ultramarine-and-auth0-ciba-dompos %}
+
+* **Direct Transcript Link**: [Building SlothForm on DEV](https://dev.to/agent_sessions/building-slothform-autonomous-ats-form-filling-with-browserbase-ultramarine-and-auth0-ciba-dompos)
 
 ## The Lazy Payoff
 
