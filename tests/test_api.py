@@ -335,3 +335,94 @@ def test_task_diff_in_get_status(client):
     assert len(task_data["diff"]) > 0
     assert task_data["diff"][0]["field"] == "Full Name"
     assert task_data["diff"][0]["tier"] == "PUBLIC"
+
+
+def test_vault_raw_profile_endpoint(client):
+    """Verify GET /api/vault/profile returns unmasked MasterIdentityProfile for setup UI."""
+    response = client.get("/api/vault/profile")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert "core" in data
+    assert "career" in data
+    assert "tax" in data
+    assert "financial" in data
+
+    # Core checks
+    assert data["core"]["full_name"] == "Arjun Sharma"
+    assert data["core"]["email"] == "arjun.sharma@example.com"
+    # Unmasked raw phone in raw profile endpoint
+    assert "+919876543210" in data["core"]["phone"]
+
+    # Tax checks
+    assert data["tax"]["pan"] == "ABCDE1234F"
+    assert data["tax"]["tax_residence_country"] == "India"
+
+
+def test_vault_status_endpoint(client):
+    """Verify GET /api/vault/status reports initialization and active profile."""
+    response = client.get("/api/vault/status")
+    assert response.status_code == 200
+    data = response.json()
+
+    assert "initialized" in data
+    assert "locked" in data
+    assert "active_profile" in data
+    assert data["active_profile"] == "Arjun Sharma"
+
+
+def test_post_vault_profile_endpoint(client, tmp_path, monkeypatch):
+    """Verify POST /api/vault/profile saves updated profile and returns confirmation."""
+    from app.config import get_settings
+
+    settings = get_settings()
+    custom_vault = str(tmp_path / "custom_profile_vault.enc")
+    monkeypatch.setattr(settings, "VAULT_FILE_PATH", custom_vault)
+
+    profile = create_sample_profile()
+    profile.core.full_name = "Priya Patel"
+    profile.core.email = "priya.patel@example.com"
+    profile.career.headline = "Lead Cloud Security Architect"
+    profile.career.education_degree = "M.S. in Cybersecurity"
+    profile.career.education_university = "IIT Delhi"
+
+    response = client.post("/api/vault/profile", json=profile.model_dump())
+    assert response.status_code == 200
+    data = response.json()
+
+    assert data["status"] == "saved"
+    assert "Priya Patel" in data["message"]
+    assert "profile" in data
+    assert data["profile"]["core"]["full_name"] == "Priya Patel"
+
+    # Verify GET /api/vault/profile now returns updated profile
+    get_res = client.get("/api/vault/profile")
+    assert get_res.status_code == 200
+    assert get_res.json()["core"]["full_name"] == "Priya Patel"
+    assert get_res.json()["career"]["headline"] == "Lead Cloud Security Architect"
+    assert get_res.json()["career"]["education_degree"] == "M.S. in Cybersecurity"
+
+
+def test_dashboard_contains_profile_setup_ui_elements(client):
+    """Verify dashboard contains Identity Vault Setup and runner identity elements."""
+    root_res = client.get("/")
+    assert root_res.status_code == 200
+    html = root_res.text
+
+    assert 'id="tab-btn-runner"' in html
+    assert 'id="tab-btn-setup"' in html
+    assert 'id="runner-view"' in html
+    assert 'id="setup-view"' in html
+    assert 'id="runner-profile-name"' in html
+    assert 'id="runner-profile-email"' in html
+    assert 'id="header-profile-name"' in html
+    assert 'id="profile-setup-form"' in html
+    assert 'id="core-full-name"' in html
+    assert 'id="core-email"' in html
+    assert 'id="core-phone"' in html
+    assert 'id="career-skills"' in html
+    assert 'id="career-resume-markdown"' in html
+    assert 'id="save-profile-btn"' in html
+    assert 'id="load-sample-btn"' in html
+    assert 'id="clear-profile-btn"' in html
+    assert 'id="vault-save-toast"' in html

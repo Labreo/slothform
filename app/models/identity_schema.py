@@ -71,6 +71,12 @@ class CareerProfile(BaseModel):
     github_url: str
     linkedin_url: str
     portfolio_url: Optional[str] = None
+    work_history: Optional[str] = None
+    education_degree: Optional[str] = None
+    education_university: Optional[str] = None
+    education_grad_year: Optional[str] = None
+    education_gpa: Optional[str] = None
+    bio: Optional[str] = None
     custom_qa_pairs: Dict[str, str] = Field(default_factory=dict)
 
 
@@ -102,6 +108,12 @@ FIELD_TIERS: Dict[str, SensitivityTier] = {
     "headline": SensitivityTier.PUBLIC,
     "years_of_experience": SensitivityTier.PUBLIC,
     "skills": SensitivityTier.PUBLIC,
+    "work_history": SensitivityTier.PUBLIC,
+    "education_degree": SensitivityTier.PUBLIC,
+    "education_university": SensitivityTier.PUBLIC,
+    "education_grad_year": SensitivityTier.PUBLIC,
+    "education_gpa": SensitivityTier.PUBLIC,
+    "bio": SensitivityTier.PUBLIC,
     "country": SensitivityTier.PUBLIC,
     "citizenship": SensitivityTier.PUBLIC,
     "phone": SensitivityTier.SEMI_SENSITIVE,

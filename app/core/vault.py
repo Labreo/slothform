@@ -355,6 +355,12 @@ def create_sample_profile() -> MasterIdentityProfile:
             github_url="https://github.com/arjunsharma-dev",
             linkedin_url="https://linkedin.com/in/arjunsharma-dev",
             portfolio_url="https://arjunsharma.dev",
+            work_history="Staff Software Engineer at Acme Cloud (2021-Present): Architected multi-region event streaming pipeline.\nSenior Systems Engineer at TechCorp (2018-2021): Scaled core API services from 10k to 500k RPM.",
+            education_degree="Bachelor of Technology in Computer Science",
+            education_university="Indian Institute of Technology, Bombay",
+            education_grad_year="2016",
+            education_gpa="3.85 / 4.0",
+            bio="Passionate distributed systems engineer specializing in high-throughput backend services, resilient cloud architectures, and privacy-preserving automation.",
             custom_qa_pairs={
                 "why_interested": "Excited by challenging high-scale distributed systems problems and collaborative culture.",
                 "work_authorization": "Authorized to work as an independent international contractor (B2B / W-8BEN).",

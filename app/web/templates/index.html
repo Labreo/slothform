@@ -60,7 +60,7 @@
 <body class="bg-void text-quartz font-sans antialiased min-h-screen relative overflow-x-hidden">
   <!-- Header & Navigation -->
   <header class="app-header sticky top-0 z-50 backdrop-blur-md bg-void/85 border-b border-obsidian-edge">
-    <div class="header-content max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between py-3">
+    <div class="header-content max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-4 py-3">
       <a href="/" class="brand flex items-center gap-3 no-underline text-quartz group">
         <span class="brand-logo flex items-center justify-center w-10 h-10 rounded-xl bg-cobalt-panel/70 border border-sapphire-hairline shadow-sm shadow-aurora-purple/20 group-hover:border-frosted-lilac transition-all">
           <svg class="w-5 h-5 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -73,310 +73,812 @@
           <span class="text-[10px] font-mono tracking-widest text-frosted-lilac uppercase font-medium">Autonomous Form Agent</span>
         </div>
       </a>
-      <div class="header-actions flex items-center gap-3">
-        <div id="vault-status-badge" class="vault-badge inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-deep-sea border border-sapphire-hairline text-xs font-mono text-ash shadow-sm">
+
+      <!-- View Switcher Tabs -->
+      <nav class="nav-tabs-group flex items-center bg-abyss border border-inkline rounded-full p-1 shadow-inner">
+        <button type="button" id="tab-btn-runner" class="nav-tab active inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-display font-medium text-quartz bg-cobalt-panel border border-sapphire-hairline transition-all">
+          <svg class="w-3.5 h-3.5 text-frosted-lilac shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Form Runner</span>
+        </button>
+        <button type="button" id="tab-btn-setup" class="nav-tab inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-display font-medium text-ash hover:text-quartz transition-all">
+          <svg class="w-3.5 h-3.5 text-frosted-lilac shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          <span>Identity Vault Setup</span>
+        </button>
+      </nav>
+
+      <!-- Active Profile Pill & Vault Status -->
+      <div class="header-actions flex items-center gap-2.5">
+        <div id="active-profile-pill" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-deep-sea border border-sapphire-hairline text-xs font-mono text-quartz cursor-pointer hover:border-frosted-lilac transition-all" title="Click to view and edit profile in Vault Setup">
           <span class="relative flex h-2 w-2 shrink-0">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="vault-indicator relative inline-flex rounded-full h-2 w-2 bg-emerald-success shadow-[0_0_8px_#10b981]"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-success"></span>
           </span>
+          <span class="text-ash hidden sm:inline">Active:</span>
+          <span id="header-profile-name" class="font-medium text-quartz">{{ profile.core.full_name if profile else "Arjun Sharma" }}</span>
+        </div>
+
+        <div id="vault-status-badge" class="vault-badge inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-deep-sea border border-sapphire-hairline text-xs font-mono text-ash shadow-sm">
           <svg class="w-3.5 h-3.5 text-emerald-success shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          <span>Vault: Encrypted (AES-256)</span>
+          <span class="hidden md:inline">Vault: Encrypted (AES-256)</span>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="container max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-16 relative z-10">
-    <!-- Hero Section with Ambient Lighting -->
-    <section class="hero text-center py-10 md:py-14 relative">
-      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-full max-w-4xl h-56 bg-gradient-to-r from-aurora-purple/20 via-signal-blue/15 to-plasma-pink/20 blur-3xl pointer-events-none -z-10 rounded-full"></div>
-      <div class="hero-tag inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cobalt-panel border border-sapphire-hairline text-frosted-lilac text-xs font-mono tracking-wider uppercase mb-5 shadow-sm">
-        <svg class="w-3.5 h-3.5 text-frosted-lilac shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-        </svg>
-        <span>Paper Instruments Ultramarine + Browserbase + Auth0 CIBA</span>
-      </div>
-      <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-semibold tracking-tight text-quartz max-w-3xl mx-auto leading-tight mb-4">
-        Autonomous Privacy-Preserving Form Filling
-      </h2>
-      <p class="text-ash text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
-        Eliminate repetitive ATS job applications and international contractor tax compliance with verified identity privacy and human-in-the-loop consent.
-      </p>
-    </section>
+  <main class="container max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-16 relative z-10">
 
-    <!-- Target Form Input Card / Command Bar -->
-    <section class="action-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 mb-8 shadow-command">
-      <form id="fill-form">
-        <div class="form-grid flex flex-col md:flex-row items-stretch md:items-center gap-3">
-          <div class="input-group relative flex-1 flex items-center bg-abyss border border-inkline rounded-full px-4 py-2.5 focus-within:border-pulse-violet focus-within:ring-2 focus-within:ring-aurora-purple/20 transition-all">
-            <span class="input-icon shrink-0 mr-3 text-ash">
-              <svg class="w-4 h-4 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    <!-- =====================================================================
+         TAB 1: AUTONOMOUS FORM RUNNER VIEW
+         ===================================================================== -->
+    <div id="runner-view" class="tab-view active">
+      <!-- Hero Section with Ambient Lighting -->
+      <section class="hero text-center py-8 md:py-12 relative">
+        <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-full max-w-4xl h-56 bg-gradient-to-r from-aurora-purple/20 via-signal-blue/15 to-plasma-pink/20 blur-3xl pointer-events-none -z-10 rounded-full"></div>
+        <div class="hero-tag inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cobalt-panel border border-sapphire-hairline text-frosted-lilac text-xs font-mono tracking-wider uppercase mb-4 shadow-sm">
+          <svg class="w-3.5 h-3.5 text-frosted-lilac shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+          <span>Paper Instruments Ultramarine + Browserbase + Auth0 CIBA</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-semibold tracking-tight text-quartz max-w-3xl mx-auto leading-tight mb-3">
+          Autonomous Privacy-Preserving Form Filling
+        </h2>
+        <p class="text-ash text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+          Eliminate repetitive ATS job applications and international contractor tax compliance with verified identity privacy and human-in-the-loop consent.
+        </p>
+      </section>
+
+      <!-- Active Candidate Identity Banner -->
+      <section id="active-identity-banner" class="active-identity-card bg-deep-sea border border-obsidian-edge hover:border-sapphire-hairline rounded-2xl p-5 mb-8 shadow-command transition-all">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex items-start md:items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-cobalt-panel/80 border border-sapphire-hairline flex items-center justify-center shrink-0 shadow-sm">
+              <svg class="w-6 h-6 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                <span class="text-[11px] font-mono uppercase tracking-wider text-frosted-lilac font-medium">Logged in / Active Profile:</span>
+                <span id="runner-profile-name" class="font-display font-semibold text-base text-quartz">{{ profile.core.full_name if profile else "Arjun Sharma" }}</span>
+                <span id="runner-profile-email" class="font-mono text-xs text-ash bg-abyss border border-inkline px-2.5 py-0.5 rounded-full">{{ profile.core.email if profile else "arjun.sharma@example.com" }}</span>
+                <span id="runner-profile-badge" class="inline-flex items-center gap-1.5 font-mono text-[11px] text-emerald-success bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-success"></span>
+                  <span>AES-256 Vault Ready</span>
+                </span>
+              </div>
+              <p id="runner-profile-meta" class="text-xs text-ash/80 line-clamp-1 font-light">
+                {{ profile.career.headline if profile else "Senior Full-Stack & Distributed Systems Engineer" }} — India (DTAA Article 12(2))
+              </p>
+            </div>
+          </div>
+          <div class="shrink-0 flex items-center gap-2 self-start md:self-center">
+            <button type="button" id="runner-edit-profile-btn" class="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2 border border-sapphire-hairline bg-abyss hover:bg-cobalt-panel text-quartz text-xs font-display font-medium transition-all">
+              <svg class="w-3.5 h-3.5 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              <span>Edit Profile & Vault</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Target Form Input Card / Command Bar -->
+      <section class="action-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 mb-8 shadow-command">
+        <form id="fill-form">
+          <div class="form-grid flex flex-col md:flex-row items-stretch md:items-center gap-3">
+            <div class="input-group relative flex-1 flex items-center bg-abyss border border-inkline rounded-full px-4 py-2.5 focus-within:border-pulse-violet focus-within:ring-2 focus-within:ring-aurora-purple/20 transition-all">
+              <span class="input-icon shrink-0 mr-3 text-ash">
+                <svg class="w-4 h-4 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                </svg>
+              </span>
+              <input 
+                type="url" 
+                id="target-url-input" 
+                class="url-input w-full bg-transparent border-none text-quartz placeholder-ash/50 text-sm focus:outline-none font-sans" 
+                placeholder="Paste job application URL (Greenhouse, Lever, Ashby) or W-8BEN form..." 
+                required
+              >
+            </div>
+
+            <!-- Dry-Run Safety Toggle -->
+            <div class="safety-toggle-wrapper flex items-center justify-between md:justify-start gap-3 bg-abyss border border-inkline rounded-full px-4 py-2.5">
+              <span id="dry-run-status-text" class="toggle-label text-xs font-mono font-medium tracking-wide text-amber-primary">DRY-RUN GUARD: ON</span>
+              <label class="toggle-switch relative inline-block w-10 h-5">
+                <input type="checkbox" id="dry-run-toggle" checked class="opacity-0 w-0 h-0">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <button type="submit" id="submit-btn" class="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 bg-quartz text-void font-display font-medium text-sm hover:bg-mist hover:shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md shrink-0">
+              <svg class="w-4 h-4 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span>Start Autonomous Fill</span>
+            </button>
+          </div>
+
+          <div class="quick-samples flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-inkline text-xs text-ash">
+            <span class="font-medium text-ash mr-1">Quick Test:</span>
+            <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://boards.greenhouse.io/stripe/jobs/456789">Greenhouse (Stripe)</button>
+            <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://jobs.lever.co/postman/senior-backend-engineer">Lever (Postman)</button>
+            <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://jobs.ashbyhq.com/openai/systems-engineer">Ashby (OpenAI)</button>
+            <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://compliance.example.com/forms/w-8ben/onboarding">IRS Form W-8BEN</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Visual 5-Stage Progress Pipeline -->
+      <section class="pipeline-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 mb-8 shadow-command">
+        <div class="pipeline-header flex items-center justify-between mb-4">
+          <span class="pipeline-title font-display text-base md:text-lg font-semibold text-quartz tracking-tight">Execution Pipeline</span>
+          <span id="pipeline-status-text" class="pipeline-status font-mono text-xs text-amber-primary bg-amber-surface border border-amber-primary/20 px-3 py-1 rounded-full">Standby — Ready for target dispatch</span>
+        </div>
+
+        <!-- Animated Progress Bar -->
+        <div class="progress-bar-container w-full h-2 bg-abyss rounded-full overflow-hidden mb-6 border border-inkline">
+          <div id="stage-progress-bar" class="progress-bar-fill h-full w-0 transition-all duration-300"></div>
+        </div>
+
+        <!-- 5 Visual Stages -->
+        <div class="pipeline-stages grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+          <div id="stage-step-1" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+            <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+              <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+              </svg>
+            </div>
+            <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">1. Provisioning</div>
+            <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Browserbase cloud sandbox & stealth proxies</div>
+            <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">10%</span>
+          </div>
+
+          <div id="stage-step-2" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+            <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+              <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
+            </div>
+            <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">2. DOM Schema</div>
+            <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Interactive inputs, selects, & frames</div>
+            <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">30%</span>
+          </div>
+
+          <div id="stage-step-3" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+            <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+              <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="16" height="16" x="4" y="4" rx="2"/>
+                <rect width="6" height="6" x="9" y="9" rx="1"/>
+                <path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>
+              </svg>
+            </div>
+            <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">3. Ultramarine</div>
+            <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Paper Instruments grounded reasoning</div>
+            <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">50%</span>
+          </div>
+
+          <div id="stage-step-4" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+            <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+              <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/>
+                <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">4. Auth0 CIBA</div>
+            <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">OIDC backchannel human approval</div>
+            <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">70%</span>
+          </div>
+
+          <div id="stage-step-5" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+            <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+              <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">5. Form Fill & Guard</div>
+            <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Playwright execution & amber outline</div>
+            <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">90-100%</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Interactive Auth0 CIBA Consent Decision Card -->
+      <section id="ciba-consent-card" class="consent-decision-card bg-deep-sea border border-amber-primary/50 rounded-2xl p-5 md:p-6 mb-8 shadow-xl shadow-amber-primary/5" style="display: none;">
+        <div class="consent-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+          <div class="consent-title-group flex items-center gap-3">
+            <span class="consent-badge-icon flex items-center justify-center w-10 h-10 rounded-xl bg-amber-primary/10 border border-amber-primary/30 text-amber-primary shrink-0">
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
               </svg>
             </span>
-            <input 
-              type="url" 
-              id="target-url-input" 
-              class="url-input w-full bg-transparent border-none text-quartz placeholder-ash/50 text-sm focus:outline-none font-sans" 
-              placeholder="Paste job application URL (Greenhouse, Lever, Ashby) or W-8BEN form..." 
-              required
-            >
+            <div>
+              <h3 class="consent-title font-display text-base md:text-lg font-semibold text-quartz leading-snug">Auth0 CIBA Consent Required (RFC 9396 RAR)</h3>
+              <p class="consent-subtitle text-xs text-ash">Human-in-the-loop authorization requested for Candidate Identity Release.</p>
+            </div>
           </div>
-
-          <!-- Dry-Run Safety Toggle -->
-          <div class="safety-toggle-wrapper flex items-center justify-between md:justify-start gap-3 bg-abyss border border-inkline rounded-full px-4 py-2.5">
-            <span id="dry-run-status-text" class="toggle-label text-xs font-mono font-medium tracking-wide text-amber-primary">DRY-RUN GUARD: ON</span>
-            <label class="toggle-switch relative inline-block w-10 h-5">
-              <input type="checkbox" id="dry-run-toggle" checked class="opacity-0 w-0 h-0">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-
-          <button type="submit" id="submit-btn" class="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 bg-quartz text-void font-display font-medium text-sm hover:bg-mist hover:shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md shrink-0">
-            <svg class="w-4 h-4 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-            </svg>
-            <span>Start Autonomous Fill</span>
-          </button>
+          <div id="ciba-timer-badge" class="consent-status-badge font-mono text-xs font-semibold text-amber-primary px-3 py-1 rounded-full bg-amber-primary/10 border border-amber-primary/20 shrink-0 self-start sm:self-auto">Awaiting Candidate Decision</div>
         </div>
 
-        <div class="quick-samples flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-inkline text-xs text-ash">
-          <span class="font-medium text-ash mr-1">Quick Test:</span>
-          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://boards.greenhouse.io/stripe/jobs/456789">Greenhouse (Stripe)</button>
-          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://jobs.lever.co/postman/senior-backend-engineer">Lever (Postman)</button>
-          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://jobs.ashbyhq.com/openai/systems-engineer">Ashby (OpenAI)</button>
-          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://compliance.example.com/forms/w-8ben/onboarding">IRS Form W-8BEN</button>
-        </div>
-      </form>
-    </section>
-
-    <!-- Visual 5-Stage Progress Pipeline -->
-    <section class="pipeline-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 mb-8 shadow-command">
-      <div class="pipeline-header flex items-center justify-between mb-4">
-        <span class="pipeline-title font-display text-base md:text-lg font-semibold text-quartz tracking-tight">Execution Pipeline</span>
-        <span id="pipeline-status-text" class="pipeline-status font-mono text-xs text-amber-primary bg-amber-surface border border-amber-primary/20 px-3 py-1 rounded-full">Standby — Ready for target dispatch</span>
-      </div>
-
-      <!-- Animated Progress Bar -->
-      <div class="progress-bar-container w-full h-2 bg-abyss rounded-full overflow-hidden mb-6 border border-inkline">
-        <div id="stage-progress-bar" class="progress-bar-fill h-full w-0 transition-all duration-300"></div>
-      </div>
-
-      <!-- 5 Visual Stages -->
-      <div class="pipeline-stages grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-        <div id="stage-step-1" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
-          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
-            <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-            </svg>
+        <div class="consent-attributes-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+          <div class="consent-attr-box consent-permitted bg-abyss border border-inkline border-l-4 border-l-emerald-success rounded-xl p-4">
+            <div class="attr-box-title flex items-center gap-2 font-display text-xs font-semibold text-emerald-success uppercase tracking-wider mb-1.5">
+              <svg class="w-4 h-4 shrink-0 text-emerald-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>Permitted Release (Candidate Core & Career)</span>
+            </div>
+            <p class="attr-box-desc text-xs text-ash leading-relaxed">Full Name, Email, Masked Phone, Tailored Experience Essay, Synthetic Resume PDF.</p>
           </div>
-          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">1. Provisioning</div>
-          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Browserbase cloud sandbox & stealth proxies</div>
-          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">10%</span>
-        </div>
-
-        <div id="stage-step-2" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
-          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
-            <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.3-4.3"/>
-            </svg>
-          </div>
-          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">2. DOM Schema</div>
-          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Interactive inputs, selects, & frames</div>
-          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">30%</span>
-        </div>
-
-        <div id="stage-step-3" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
-          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
-            <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="16" height="16" x="4" y="4" rx="2"/>
-              <rect width="6" height="6" x="9" y="9" rx="1"/>
-              <path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>
-            </svg>
-          </div>
-          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">3. Ultramarine</div>
-          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Paper Instruments grounded reasoning</div>
-          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">50%</span>
-        </div>
-
-        <div id="stage-step-4" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
-          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
-            <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/>
-              <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
-            </svg>
-          </div>
-          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">4. Auth0 CIBA</div>
-          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">OIDC backchannel human approval</div>
-          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">70%</span>
-        </div>
-
-        <div id="stage-step-5" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
-          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
-            <svg class="w-5 h-5 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
-              <path d="m9 12 2 2 4-4"/>
-            </svg>
-          </div>
-          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">5. Form Fill & Guard</div>
-          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Playwright execution & amber outline</div>
-          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">90-100%</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Interactive Auth0 CIBA Consent Decision Card -->
-    <section id="ciba-consent-card" class="consent-decision-card bg-deep-sea border border-amber-primary/50 rounded-2xl p-5 md:p-6 mb-8 shadow-xl shadow-amber-primary/5" style="display: none;">
-      <div class="consent-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-        <div class="consent-title-group flex items-center gap-3">
-          <span class="consent-badge-icon flex items-center justify-center w-10 h-10 rounded-xl bg-amber-primary/10 border border-amber-primary/30 text-amber-primary shrink-0">
-            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </span>
-          <div>
-            <h3 class="consent-title font-display text-base md:text-lg font-semibold text-quartz leading-snug">Auth0 CIBA Consent Required (RFC 9396 RAR)</h3>
-            <p class="consent-subtitle text-xs text-ash">Human-in-the-loop authorization requested for Candidate Identity Release.</p>
+          <div class="consent-attr-box consent-prohibited bg-abyss border border-inkline border-l-4 border-l-rose-danger rounded-xl p-4">
+            <div class="attr-box-title flex items-center gap-2 font-display text-xs font-semibold text-rose-danger uppercase tracking-wider mb-1.5">
+              <svg class="w-4 h-4 shrink-0 text-rose-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>Protected & Withheld (Auth0 Token Vault)</span>
+            </div>
+            <p class="attr-box-desc text-xs text-ash leading-relaxed">Indian PAN / SSN, Banking details, Date of Birth strictly redacted from ATS release.</p>
           </div>
         </div>
-        <div id="ciba-timer-badge" class="consent-status-badge font-mono text-xs font-semibold text-amber-primary px-3 py-1 rounded-full bg-amber-primary/10 border border-amber-primary/20 shrink-0 self-start sm:self-auto">Awaiting Candidate Decision</div>
-      </div>
 
-      <div class="consent-attributes-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
-        <div class="consent-attr-box consent-permitted bg-abyss border border-inkline border-l-4 border-l-emerald-success rounded-xl p-4">
-          <div class="attr-box-title flex items-center gap-2 font-display text-xs font-semibold text-emerald-success uppercase tracking-wider mb-1.5">
-            <svg class="w-4 h-4 shrink-0 text-emerald-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <div class="consent-actions-row flex flex-wrap items-center gap-3">
+          <button type="button" id="ciba-approve-btn" class="btn-primary btn-consent-approve inline-flex items-center gap-2 rounded-full px-5 py-2.5 bg-quartz text-void font-display font-medium text-xs hover:bg-mist transition-all active:scale-95 shadow-md">
+            <svg class="w-4 h-4 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            <span>Permitted Release (Candidate Core & Career)</span>
-          </div>
-          <p class="attr-box-desc text-xs text-ash leading-relaxed">Full Name, Email, Masked Phone, Tailored Experience Essay, Synthetic Resume PDF.</p>
-        </div>
-        <div class="consent-attr-box consent-prohibited bg-abyss border border-inkline border-l-4 border-l-rose-danger rounded-xl p-4">
-          <div class="attr-box-title flex items-center gap-2 font-display text-xs font-semibold text-rose-danger uppercase tracking-wider mb-1.5">
-            <svg class="w-4 h-4 shrink-0 text-rose-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <span>Authorize Identity Release</span>
+          </button>
+          <button type="button" id="ciba-reject-btn" class="btn-ghost btn-consent-reject inline-flex items-center gap-2 rounded-full px-5 py-2.5 border border-rose-danger/40 text-rose-danger font-display font-medium text-xs hover:bg-rose-danger/10 transition-all active:scale-95">
+            <svg class="w-4 h-4 text-rose-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
-            <span>Protected & Withheld (Auth0 Token Vault)</span>
-          </div>
-          <p class="attr-box-desc text-xs text-ash leading-relaxed">Indian PAN / SSN, Banking details, Date of Birth strictly redacted from ATS release.</p>
-        </div>
-      </div>
-
-      <div class="consent-actions-row flex flex-wrap items-center gap-3">
-        <button type="button" id="ciba-approve-btn" class="btn-primary btn-consent-approve inline-flex items-center gap-2 rounded-full px-5 py-2.5 bg-quartz text-void font-display font-medium text-xs hover:bg-mist transition-all active:scale-95 shadow-md">
-          <svg class="w-4 h-4 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-          <span>Authorize Identity Release</span>
-        </button>
-        <button type="button" id="ciba-reject-btn" class="btn-ghost btn-consent-reject inline-flex items-center gap-2 rounded-full px-5 py-2.5 border border-rose-danger/40 text-rose-danger font-display font-medium text-xs hover:bg-rose-danger/10 transition-all active:scale-95">
-          <svg class="w-4 h-4 text-rose-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-          </svg>
-          <span>Deny Consent & Halt</span>
-        </button>
-        <button type="button" id="ciba-inspect-modal-btn" class="btn-ghost inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 border border-obsidian-edge text-ash font-display font-medium text-xs hover:border-sapphire-hairline hover:text-quartz transition-all">
-          <span>Inspect Full Diff</span>
-          <svg class="w-3.5 h-3.5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-            <polyline points="15 3 21 3 21 9"/>
-            <line x1="10" y1="14" x2="21" y2="3"/>
-          </svg>
-        </button>
-      </div>
-    </section>
-
-    <!-- Dashboard Panels: Replay and Field Diff -->
-    <section class="dashboard-grid grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      <!-- Browserbase Replay Container -->
-      <div class="panel-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 shadow-command flex flex-col">
-        <div class="panel-title flex items-center justify-between mb-4">
-          <div class="panel-title-text flex items-center gap-2.5">
-            <span class="font-display text-sm md:text-base font-semibold text-quartz tracking-tight">Browserbase Cloud Session Replay</span>
-            <span id="replay-live-dot" class="live-dot inline-block w-2 h-2 rounded-full bg-emerald-success shadow-[0_0_8px_#10b981]" style="display: none;"></span>
-          </div>
-          <a id="replay-external-link" href="#" target="_blank" class="replay-link font-mono text-xs text-signal-blue hover:underline"></a>
-        </div>
-        <div id="replay-container" class="replay-container crt-screen w-full aspect-video bg-black rounded-xl border border-inkline overflow-hidden relative flex items-center justify-center">
-          <iframe id="browserbase-replay-frame" class="replay-frame w-full h-full border-none" src="" style="display: none;" allowfullscreen></iframe>
-          <div id="replay-placeholder" class="replay-placeholder flex flex-col items-center justify-center p-8 text-center text-ash">
-            <svg class="w-12 h-12 text-ash/40 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="20" height="14" x="2" y="3" rx="2"/>
-              <line x1="8" y1="21" x2="16" y2="21"/>
-              <line x1="12" y1="17" x2="12" y2="21"/>
-              <polygon points="10 8 16 11 10 14 10 8" fill="currentColor" fill-opacity="0.3"/>
-            </svg>
-            <p class="text-xs text-ash/80 max-w-sm">Remote browser session replay will stream here once the task executes.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Field Diff Summary -->
-      <div class="panel-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 shadow-command flex flex-col">
-        <div class="panel-title flex items-center justify-between mb-4">
-          <span class="font-display text-sm md:text-base font-semibold text-quartz tracking-tight">Privacy Diff & Field Consent</span>
-          <button type="button" id="view-diff-btn" class="btn-ghost inline-flex items-center gap-1.5 text-xs text-amber-primary hover:underline" style="color: var(--amber-primary);">
-            <span>Expand Full Diff</span>
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <span>Deny Consent & Halt</span>
+          </button>
+          <button type="button" id="ciba-inspect-modal-btn" class="btn-ghost inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 border border-obsidian-edge text-ash font-display font-medium text-xs hover:border-sapphire-hairline hover:text-quartz transition-all">
+            <span>Inspect Full Diff</span>
+            <svg class="w-3.5 h-3.5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
               <polyline points="15 3 21 3 21 9"/>
               <line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
           </button>
         </div>
-        <div class="diff-table-wrapper overflow-x-auto rounded-xl border border-inkline flex-1">
-          <table class="diff-table w-full text-left text-xs bg-abyss">
-            <thead>
-              <tr class="bg-void/50 border-b border-obsidian-edge text-frosted-lilac uppercase text-[10px] font-mono tracking-wider">
-                <th class="p-3">Field Attribute</th>
-                <th class="p-3">Sensitivity Tier</th>
-                <th class="p-3">Populated / Masked Value</th>
-                <th class="p-3">Status</th>
-              </tr>
-            </thead>
-            <tbody id="diff-tbody">
-              <tr>
-                <td colspan="4" class="p-6 text-center text-ash/60">
-                  Awaiting form analysis... Start a fill task to inspect candidate attribute releases.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Real-Time Telemetry Terminal Feed -->
-    <section class="telemetry-card bg-[#07080d] border border-obsidian-edge rounded-2xl p-5 font-mono shadow-command">
-      <div class="telemetry-header flex items-center justify-between mb-3 pb-3 border-b border-inkline">
-        <div class="terminal-dots flex items-center gap-1.5">
-          <span class="dot dot-red w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-          <span class="dot dot-yellow w-2.5 h-2.5 rounded-full bg-amber-500"></span>
-          <span class="dot dot-green w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+      <!-- Dashboard Panels: Replay and Field Diff -->
+      <section class="dashboard-grid grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Browserbase Replay Container -->
+        <div class="panel-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 shadow-command flex flex-col">
+          <div class="panel-title flex items-center justify-between mb-4">
+            <div class="panel-title-text flex items-center gap-2.5">
+              <span class="font-display text-sm md:text-base font-semibold text-quartz tracking-tight">Browserbase Cloud Session Replay</span>
+              <span id="replay-live-dot" class="live-dot inline-block w-2 h-2 rounded-full bg-emerald-success shadow-[0_0_8px_#10b981]" style="display: none;"></span>
+            </div>
+            <a id="replay-external-link" href="#" target="_blank" class="replay-link font-mono text-xs text-signal-blue hover:underline"></a>
+          </div>
+          <div id="replay-container" class="replay-container crt-screen w-full aspect-video bg-black rounded-xl border border-inkline overflow-hidden relative flex items-center justify-center">
+            <iframe id="browserbase-replay-frame" class="replay-frame w-full h-full border-none" src="" style="display: none;" allowfullscreen></iframe>
+            <div id="replay-placeholder" class="replay-placeholder flex flex-col items-center justify-center p-8 text-center text-ash">
+              <svg class="w-12 h-12 text-ash/40 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="14" x="2" y="3" rx="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+                <polygon points="10 8 16 11 10 14 10 8" fill="currentColor" fill-opacity="0.3"/>
+              </svg>
+              <p class="text-xs text-ash/80 max-w-sm">Remote browser session replay will stream here once the task executes.</p>
+            </div>
+          </div>
         </div>
-        <span class="telemetry-title text-xs uppercase tracking-wider text-ash font-medium">Server-Sent Events (SSE) Live Telemetry</span>
-        <span class="text-ash/50 text-[11px]">/api/tasks/{task_id}/events</span>
-      </div>
-      <div id="terminal-logs" class="terminal-logs h-40 overflow-y-auto text-xs leading-relaxed pr-2">
-        <div class="log-entry flex items-start gap-3 mb-1">
-          <span class="log-time text-ash/50 shrink-0">[Ready]</span>
-          <span class="log-stage text-frosted-lilac shrink-0">&lt;IDLE&gt;</span>
-          <span class="log-msg text-quartz">SlothForm telemetry daemon active. Ready to ingest application URLs.</span>
+
+        <!-- Field Diff Summary -->
+        <div class="panel-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 shadow-command flex flex-col">
+          <div class="panel-title flex items-center justify-between mb-4">
+            <span class="font-display text-sm md:text-base font-semibold text-quartz tracking-tight">Privacy Diff & Field Consent</span>
+            <button type="button" id="view-diff-btn" class="btn-ghost inline-flex items-center gap-1.5 text-xs text-amber-primary hover:underline" style="color: var(--amber-primary);">
+              <span>Expand Full Diff</span>
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/>
+                <line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </button>
+          </div>
+          <div class="diff-table-wrapper overflow-x-auto rounded-xl border border-inkline flex-1">
+            <table class="diff-table w-full text-left text-xs bg-abyss">
+              <thead>
+                <tr class="bg-void/50 border-b border-obsidian-edge text-frosted-lilac uppercase text-[10px] font-mono tracking-wider">
+                  <th class="p-3">Field Attribute</th>
+                  <th class="p-3">Sensitivity Tier</th>
+                  <th class="p-3">Populated / Masked Value</th>
+                  <th class="p-3">Status</th>
+                </tr>
+              </thead>
+              <tbody id="diff-tbody">
+                <tr>
+                  <td colspan="4" class="p-6 text-center text-ash/60">
+                    Awaiting form analysis... Start a fill task to inspect candidate attribute releases.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <!-- Real-Time Telemetry Terminal Feed -->
+      <section class="telemetry-card bg-[#07080d] border border-obsidian-edge rounded-2xl p-5 font-mono shadow-command">
+        <div class="telemetry-header flex items-center justify-between mb-3 pb-3 border-b border-inkline">
+          <div class="terminal-dots flex items-center gap-1.5">
+            <span class="dot dot-red w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+            <span class="dot dot-yellow w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+            <span class="dot dot-green w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+          </div>
+          <span class="telemetry-title text-xs uppercase tracking-wider text-ash font-medium">Server-Sent Events (SSE) Live Telemetry</span>
+          <span class="text-ash/50 text-[11px]">/api/tasks/{task_id}/events</span>
+        </div>
+        <div id="terminal-logs" class="terminal-logs h-40 overflow-y-auto text-xs leading-relaxed pr-2">
+          <div class="log-entry flex items-start gap-3 mb-1">
+            <span class="log-time text-ash/50 shrink-0">[Ready]</span>
+            <span class="log-stage text-frosted-lilac shrink-0">&lt;IDLE&gt;</span>
+            <span class="log-msg text-quartz">SlothForm telemetry daemon active. Ready to ingest application URLs.</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- =====================================================================
+         TAB 2: IDENTITY VAULT & PROFILE SETUP VIEW
+         ===================================================================== -->
+    <div id="setup-view" class="tab-view" style="display: none;">
+      <!-- Setup View Header -->
+      <section class="setup-header py-6 mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-obsidian-edge">
+          <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cobalt-panel border border-sapphire-hairline text-frosted-lilac text-xs font-mono tracking-wider uppercase mb-3">
+              <svg class="w-3.5 h-3.5 text-frosted-lilac shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>AES-256-GCM AEAD Local Identity Store</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-display font-semibold text-quartz tracking-tight mb-2">
+              Identity Vault & Profile Setup
+            </h2>
+            <p class="text-ash text-sm max-w-3xl font-light leading-relaxed">
+              Configure your master personal details, work history, education, skills, and contractor tax compliance. All attributes are encrypted and stored locally in your private token vault. Sensitive tax IDs and financial credentials are strictly protected behind Auth0 CIBA consent.
+            </p>
+          </div>
+
+          <!-- Top Action Buttons -->
+          <div class="flex flex-wrap items-center gap-3 shrink-0">
+            <button type="button" id="load-sample-btn" class="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2.5 border border-sapphire-hairline bg-deep-sea hover:bg-cobalt-panel text-quartz text-xs font-display font-medium transition-all shadow-sm">
+              <svg class="w-3.5 h-3.5 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+                <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+                <path d="M16 21h5v-5"/>
+              </svg>
+              <span>Load Sample Profile</span>
+            </button>
+
+            <button type="button" id="clear-profile-btn" class="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2.5 border border-inkline text-ash hover:text-white hover:border-obsidian-edge text-xs font-display font-medium transition-all">
+              <svg class="w-3.5 h-3.5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+              <span>Clear Form</span>
+            </button>
+
+            <button type="button" id="save-profile-btn" class="btn-primary inline-flex items-center gap-2 rounded-full px-6 py-2.5 bg-quartz text-void font-display font-semibold text-xs hover:bg-mist transition-all active:scale-[0.98] shadow-md">
+              <svg class="w-3.5 h-3.5 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>Save to Encrypted Vault</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Success / Error Toast Banner -->
+        <div id="vault-save-toast" class="toast-banner mt-4 p-4 rounded-xl border bg-deep-sea flex items-center justify-between gap-3 shadow-lg" style="display: none;">
+          <div class="flex items-center gap-3">
+            <span id="toast-icon-wrap" class="w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center text-emerald-success shrink-0">
+              <svg class="w-4 h-4 text-emerald-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            <div>
+              <h4 id="toast-title" class="font-display text-xs font-semibold text-quartz">Profile Encrypted & Persisted</h4>
+              <p id="toast-message" class="text-xs text-ash">Your master identity details have been written directly to the AES-256 encrypted vault.</p>
+            </div>
+          </div>
+          <button type="button" id="toast-close-btn" class="text-ash hover:text-white p-1">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- Profile Form -->
+      <form id="profile-setup-form" class="space-y-6">
+        <!-- 1. Personal & Contact Information -->
+        <div class="form-card bg-deep-sea border border-obsidian-edge rounded-2xl p-6 shadow-command">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-inkline">
+            <span class="w-8 h-8 rounded-lg bg-cobalt-panel border border-sapphire-hairline flex items-center justify-center text-frosted-lilac shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="font-display text-base font-semibold text-quartz">1. Personal & Contact Identity</h3>
+              <p class="text-xs text-ash">Primary candidate identifiers and communication coordinates</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label for="core-full-name" class="form-label">Full Legal Name *</label>
+              <input type="text" id="core-full-name" class="form-control" placeholder="Arjun Sharma" required>
+            </div>
+            <div>
+              <label for="core-email" class="form-label">Email Address *</label>
+              <input type="email" id="core-email" class="form-control" placeholder="arjun.sharma@example.com" required>
+            </div>
+            <div>
+              <label for="core-phone" class="form-label">Phone Number *</label>
+              <input type="tel" id="core-phone" class="form-control" placeholder="+919876543210" required>
+              <span class="form-help">Include international country code</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div class="md:col-span-2">
+              <label for="core-address-line1" class="form-label">Street Address Line 1 *</label>
+              <input type="text" id="core-address-line1" class="form-control" placeholder="402 Palm Grove, Indiranagar" required>
+            </div>
+            <div class="md:col-span-2">
+              <label for="core-address-line2" class="form-label">Street Address Line 2</label>
+              <input type="text" id="core-address-line2" class="form-control" placeholder="100 Feet Road">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+            <div>
+              <label for="core-city" class="form-label">City *</label>
+              <input type="text" id="core-city" class="form-control" placeholder="Bengaluru" required>
+            </div>
+            <div>
+              <label for="core-state" class="form-label">State / Province *</label>
+              <input type="text" id="core-state" class="form-control" placeholder="Karnataka" required>
+            </div>
+            <div>
+              <label for="core-postal" class="form-label">Postal / ZIP Code *</label>
+              <input type="text" id="core-postal" class="form-control" placeholder="560038" required>
+            </div>
+            <div>
+              <label for="core-country" class="form-label">Country *</label>
+              <input type="text" id="core-country" class="form-control" value="India" required>
+            </div>
+            <div>
+              <label for="core-citizenship" class="form-label">Citizenship *</label>
+              <input type="text" id="core-citizenship" class="form-control" value="India" required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label for="core-dob" class="form-label">Date of Birth (YYYY-MM-DD)</label>
+              <input type="text" id="core-dob" class="form-control" placeholder="1994-08-15">
+              <span class="form-help">Protected: Redacted from ATS jobs</span>
+            </div>
+            <div>
+              <label for="core-portfolio" class="form-label">Portfolio / Personal Site</label>
+              <input type="url" id="core-portfolio" class="form-control" placeholder="https://arjunsharma.dev">
+            </div>
+            <div>
+              <label for="core-linkedin" class="form-label">LinkedIn Profile URL *</label>
+              <input type="url" id="core-linkedin" class="form-control" placeholder="https://linkedin.com/in/arjunsharma-dev" required>
+            </div>
+            <div>
+              <label for="core-github" class="form-label">GitHub Profile URL *</label>
+              <input type="url" id="core-github" class="form-control" placeholder="https://github.com/arjunsharma-dev" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Work History & Career Accomplishments -->
+        <div class="form-card bg-deep-sea border border-obsidian-edge rounded-2xl p-6 shadow-command">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-inkline">
+            <span class="w-8 h-8 rounded-lg bg-cobalt-panel border border-sapphire-hairline flex items-center justify-center text-frosted-lilac shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="14" x="2" y="7" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="font-display text-base font-semibold text-quartz">2. Work History & Accomplishments</h3>
+              <p class="text-xs text-ash">Professional experience used to ground tailored job application essays</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="md:col-span-2">
+              <label for="career-headline" class="form-label">Professional Headline *</label>
+              <input type="text" id="career-headline" class="form-control" placeholder="Senior Full-Stack & Distributed Systems Engineer" required>
+            </div>
+            <div>
+              <label for="career-yoe" class="form-label">Years of Experience *</label>
+              <input type="number" id="career-yoe" class="form-control" min="0" max="60" value="8" required>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="career-bio" class="form-label">Professional Bio / Summary</label>
+            <textarea id="career-bio" rows="2" class="form-control" placeholder="Passionate distributed systems engineer specializing in high-throughput backend services, resilient cloud architectures, and privacy-preserving automation."></textarea>
+          </div>
+
+          <div>
+            <label for="career-work-history" class="form-label">Work Experience & Key Accomplishments</label>
+            <textarea id="career-work-history" rows="4" class="form-control font-mono text-xs" placeholder="Staff Software Engineer at Acme Cloud (2021-Present): Architected multi-region event streaming pipeline.
+Senior Systems Engineer at TechCorp (2018-2021): Scaled core API services from 10k to 500k RPM."></textarea>
+            <span class="form-help">Include companies, dates, roles, and concrete technical metrics.</span>
+          </div>
+        </div>
+
+        <!-- 3. Education & Academic Credentials -->
+        <div class="form-card bg-deep-sea border border-obsidian-edge rounded-2xl p-6 shadow-command">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-inkline">
+            <span class="w-8 h-8 rounded-lg bg-cobalt-panel border border-sapphire-hairline flex items-center justify-center text-frosted-lilac shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="font-display text-base font-semibold text-quartz">3. Education & Academic History</h3>
+              <p class="text-xs text-ash">Degrees and university credentials for ATS applicant forms</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-2">
+              <label for="career-degree" class="form-label">Degree / Qualification</label>
+              <input type="text" id="career-degree" class="form-control" placeholder="Bachelor of Technology in Computer Science">
+            </div>
+            <div>
+              <label for="career-university" class="form-label">University / Institution</label>
+              <input type="text" id="career-university" class="form-control" placeholder="Indian Institute of Technology, Bombay">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label for="career-grad-year" class="form-label">Grad Year</label>
+                <input type="text" id="career-grad-year" class="form-control" placeholder="2016">
+              </div>
+              <div>
+                <label for="career-gpa" class="form-label">GPA</label>
+                <input type="text" id="career-gpa" class="form-control" placeholder="3.85 / 4.0">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Technical Skills & Role Fit -->
+        <div class="form-card bg-deep-sea border border-obsidian-edge rounded-2xl p-6 shadow-command">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-inkline">
+            <span class="w-8 h-8 rounded-lg bg-cobalt-panel border border-sapphire-hairline flex items-center justify-center text-frosted-lilac shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="font-display text-base font-semibold text-quartz">4. Technical Skills & Custom Q&A</h3>
+              <p class="text-xs text-ash">Core technical proficiencies and standardized screening questions</p>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="career-skills" class="form-label">Technical Skills (Comma-Separated) *</label>
+            <input type="text" id="career-skills" class="form-control" placeholder="Python, FastAPI, React, TypeScript, PostgreSQL, Docker, Kubernetes, AWS" required>
+            <span class="form-help">Grounded Invariant: Ultramarine will never hallucinate skills outside this verified list.</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="qa-why-interested" class="form-label">Role Motivation ("Why are you interested in this role?")</label>
+              <textarea id="qa-why-interested" rows="2" class="form-control" placeholder="Excited by challenging high-scale distributed systems problems and collaborative engineering culture."></textarea>
+            </div>
+            <div>
+              <label for="qa-work-auth" class="form-label">Work Authorization Statement</label>
+              <textarea id="qa-work-auth" rows="2" class="form-control" placeholder="Authorized to work as an independent international contractor (B2B / W-8BEN treaty benefits)."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Contractor Tax Compliance & W-8BEN Treaty -->
+        <div class="form-card bg-deep-sea border border-obsidian-edge rounded-2xl p-6 shadow-command">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-inkline">
+            <span class="w-8 h-8 rounded-lg bg-cobalt-panel border border-sapphire-hairline flex items-center justify-center text-purple-tax shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="font-display text-base font-semibold text-quartz">5. Contractor Tax Compliance & IRS Form W-8BEN</h3>
+              <p class="text-xs text-ash">US-India Double Taxation Avoidance Agreement (DTAA) credentials</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label for="tax-residence-country" class="form-label">Tax Residence Country *</label>
+              <input type="text" id="tax-residence-country" class="form-control" value="India" required>
+            </div>
+            <div>
+              <label for="tax-pan" class="form-label">Foreign Tax ID / Indian PAN *</label>
+              <input type="text" id="tax-pan" class="form-control font-mono uppercase" placeholder="ABCDE1234F" pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$" maxlength="10">
+              <span class="form-help">Format: 5 letters + 4 digits + 1 letter (e.g. ABCDE1234F)</span>
+            </div>
+            <div>
+              <label for="tax-ssn-itin" class="form-label">US Tax ID / SSN (Blocked for Non-US)</label>
+              <input type="text" id="tax-ssn-itin" class="form-control font-mono" placeholder="None (Blocked for non-US)" readonly>
+              <span class="form-help text-emerald-success">Safety: Strictly blocked on W-8BEN foreign filings</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <label for="tax-treaty-country" class="form-label">Treaty Country</label>
+              <input type="text" id="tax-treaty-country" class="form-control" value="India">
+            </div>
+            <div>
+              <label for="tax-treaty-article" class="form-label">Treaty Article</label>
+              <input type="text" id="tax-treaty-article" class="form-control" value="Article 12(2)">
+            </div>
+            <div>
+              <label for="tax-treaty-rate" class="form-label">Withholding Rate</label>
+              <input type="text" id="tax-treaty-rate" class="form-control" value="15%">
+            </div>
+            <div>
+              <label for="tax-treaty-income-type" class="form-label">Treaty Income Type</label>
+              <input type="text" id="tax-treaty-income-type" class="form-control" value="Royalties / Independent Personal Services">
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 pt-2">
+            <input type="checkbox" id="tax-claim-benefits" checked class="w-4 h-4 rounded border-inkline bg-abyss text-signal-blue focus:ring-aurora-purple">
+            <label for="tax-claim-benefits" class="text-xs text-quartz select-none">Claim US-India DTAA treaty benefits on international contractor payments</label>
+          </div>
+        </div>
+
+        <!-- 6. Financial & Remittance Details -->
+        <div class="form-card bg-deep-sea border border-obsidian-edge rounded-2xl p-6 shadow-command">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-inkline">
+            <span class="w-8 h-8 rounded-lg bg-cobalt-panel border border-sapphire-hairline flex items-center justify-center text-rose-danger shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="12" x="2" y="6" rx="2"/>
+                <circle cx="12" cy="12" r="2"/>
+                <path d="M6 12h.01M18 12h.01"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="font-display text-base font-semibold text-quartz">6. Financial & Remittance Details (Optional)</h3>
+              <p class="text-xs text-ash">Banking data for B2B contractor payouts (strictly protected behind CIBA consent)</p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label for="fin-bank-name" class="form-label">Bank Name</label>
+              <input type="text" id="fin-bank-name" class="form-control" placeholder="HDFC Bank">
+            </div>
+            <div>
+              <label for="fin-account-number" class="form-label">Account Number</label>
+              <input type="text" id="fin-account-number" class="form-control font-mono" placeholder="50100234567890">
+            </div>
+            <div>
+              <label for="fin-routing-ifsc" class="form-label">Routing / IFSC Code</label>
+              <input type="text" id="fin-routing-ifsc" class="form-control font-mono uppercase" placeholder="HDFC0000240">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="fin-swift-bic" class="form-label">SWIFT / BIC Code</label>
+              <input type="text" id="fin-swift-bic" class="form-control font-mono uppercase" placeholder="HDFCINBB">
+            </div>
+            <div>
+              <label for="fin-wise-id" class="form-label">Wise Recipient ID</label>
+              <input type="text" id="fin-wise-id" class="form-control font-mono" placeholder="wise_recp_98765432">
+            </div>
+          </div>
+        </div>
+
+        <!-- 7. Resume Document & Text -->
+        <div class="form-card bg-deep-sea border border-obsidian-edge rounded-2xl p-6 shadow-command">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-inkline">
+            <span class="w-8 h-8 rounded-lg bg-cobalt-panel border border-sapphire-hairline flex items-center justify-center text-frosted-lilac shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </span>
+            <div>
+              <h3 class="font-display text-base font-semibold text-quartz">7. Resume Document & Plaintext</h3>
+              <p class="text-xs text-ash">Full resume text used for PDF synthesis and detailed screening matching</p>
+            </div>
+          </div>
+
+          <!-- File Upload Dropzone -->
+          <div class="mb-4">
+            <label class="form-label">Upload Resume File (.txt, .md, .pdf)</label>
+            <div class="border-2 border-dashed border-inkline hover:border-sapphire-hairline rounded-xl p-5 text-center bg-abyss transition-all">
+              <input type="file" id="resume-file-input" class="hidden" accept=".txt,.md,.pdf">
+              <label for="resume-file-input" class="cursor-pointer flex flex-col items-center justify-center">
+                <svg class="w-8 h-8 text-frosted-lilac/70 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span class="text-xs font-display font-medium text-quartz">Click to choose or drag a resume file</span>
+                <span id="resume-upload-status" class="text-[11px] text-ash/60 mt-1">Supports Markdown (.md), Plaintext (.txt), or PDF</span>
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label for="career-resume-markdown" class="form-label">Resume Content (Markdown / Plaintext) *</label>
+            <textarea id="career-resume-markdown" rows="8" class="form-control font-mono text-xs leading-relaxed" placeholder="# Arjun Sharma&#10;&#10;Senior Full-Stack Engineer with 8+ years developing distributed systems..." required></textarea>
+          </div>
+        </div>
+
+        <!-- 8. Bottom Save Bar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-obsidian-edge">
+          <div class="flex items-center gap-2 text-xs text-ash">
+            <svg class="w-4 h-4 text-emerald-success shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span>Changes persist immediately to local encrypted disk with AES-256-GCM AEAD authentication.</span>
+          </div>
+          <button type="button" id="save-profile-btn-bottom" class="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 bg-quartz text-void font-display font-semibold text-xs hover:bg-mist transition-all active:scale-[0.98] shadow-md shrink-0">
+            <svg class="w-3.5 h-3.5 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>Save to Encrypted Vault</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
   </main>
 
-  <!-- Diff Inspection Modal -->
+  <!-- Diff Inspection Modal (Preserved with all IDs) -->
   <div id="diff-inspection-modal" class="modal-overlay fixed inset-0 z-50 bg-void/90 backdrop-blur-md items-center justify-center p-4" style="display: none;">
     <div class="modal-content bg-deep-sea border border-sapphire-hairline rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 relative shadow-2xl">
       <button type="button" id="modal-close-btn" class="modal-close absolute top-4 right-4 w-8 h-8 rounded-full border border-obsidian-edge flex items-center justify-center text-ash hover:text-white hover:border-frosted-lilac transition-all">
@@ -398,9 +900,9 @@
           <span>Permitted Release (Candidate Core & Career)</span>
         </h4>
         <ul class="text-xs text-ash list-inside space-y-1">
-          <li>Full Name: Arjun Sharma (Tier: PUBLIC)</li>
-          <li>Email: arjun.sharma@example.com (Tier: PUBLIC)</li>
-          <li>Phone: *********3210 (Tier: SEMI_SENSITIVE, Masked)</li>
+          <li>Full Name: <span class="modal-active-name">{{ profile.core.full_name if profile else "Arjun Sharma" }}</span> (Tier: PUBLIC)</li>
+          <li>Email: <span class="modal-active-email">{{ profile.core.email if profile else "arjun.sharma@example.com" }}</span> (Tier: PUBLIC)</li>
+          <li>Phone: Masked (Tier: SEMI_SENSITIVE, Masked)</li>
           <li>Resume: synthetic_resume.pdf (Tier: SEMI_SENSITIVE, Synthetic verified)</li>
           <li>Custom Essay: Tailored without hallucinated experience (Tier: SEMI_SENSITIVE)</li>
         </ul>

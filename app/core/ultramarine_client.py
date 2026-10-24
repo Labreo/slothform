@@ -126,6 +126,12 @@ class UltramarineClient:
                     "github_url": user_profile.career.github_url,
                     "linkedin_url": user_profile.career.linkedin_url,
                     "portfolio_url": user_profile.career.portfolio_url,
+                    "work_history": user_profile.career.work_history,
+                    "education_degree": user_profile.career.education_degree,
+                    "education_university": user_profile.career.education_university,
+                    "education_grad_year": user_profile.career.education_grad_year,
+                    "education_gpa": user_profile.career.education_gpa,
+                    "bio": user_profile.career.bio,
                     "custom_qa_pairs": user_profile.career.custom_qa_pairs,
                 },
             },
@@ -296,6 +302,16 @@ class UltramarineClient:
             # Current Employer / Company / Org
             elif "company" in flabel or "org" in fid or "current employer" in flabel or fname == "org":
                 val = "Self-Employed / Independent Contractor"
+
+            # Education / Degree / University
+            elif "university" in fctx or "school" in fctx or "college" in fctx:
+                val = user_profile.career.education_university or "Indian Institute of Technology, Bombay"
+            elif "degree" in fctx:
+                val = user_profile.career.education_degree or "Bachelor of Technology in Computer Science"
+            elif "graduation" in fctx or "grad_year" in fctx:
+                val = user_profile.career.education_grad_year or "2016"
+            elif "gpa" in fctx:
+                val = user_profile.career.education_gpa or "3.85 / 4.0"
 
             # Street Address
             elif "address" in flabel or "address_line1" in fid or "street" in flabel:

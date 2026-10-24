@@ -109,3 +109,5 @@ downloads/
 recordings/
 trace/
 .playwright/
+artifacts/documents/*.pdf
+artifacts/screenshots/*.png

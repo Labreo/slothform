@@ -1316,3 +1316,82 @@ input:checked + .toggle-slider:before {
     align-items: flex-start;
   }
 }
+
+/* ==========================================================================
+   SlothForm Identity Vault Setup & Navigation Tabs
+   ========================================================================== */
+
+.nav-tab {
+  cursor: pointer;
+  border: 1px solid transparent;
+  color: var(--color-ash);
+  background: transparent;
+  transition: var(--transition);
+  font-family: var(--font-display);
+}
+
+.nav-tab:hover {
+  color: var(--color-quartz);
+}
+
+.nav-tab.active {
+  background: var(--color-cobalt-panel);
+  border-color: var(--color-sapphire-hairline);
+  color: var(--color-quartz);
+  box-shadow: 0 0 16px rgba(98, 95, 255, 0.15);
+}
+
+.form-control {
+  background: var(--color-abyss);
+  border: 1px solid var(--color-inkline);
+  border-radius: 8px;
+  color: var(--color-quartz);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  width: 100%;
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: var(--color-pulse-violet);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(98, 95, 255, 0.2);
+}
+
+.form-control::placeholder {
+  color: rgba(171, 174, 187, 0.4);
+}
+
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ash);
+  margin-bottom: 6px;
+}
+
+.form-help {
+  display: block;
+  font-size: 11px;
+  color: var(--color-slate);
+  margin-top: 4px;
+}
+
+.toast-banner {
+  animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

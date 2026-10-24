@@ -524,6 +524,12 @@ def mask_profile(profile: MasterIdentityProfile) -> Dict[str, Any]:
             "github_url": profile.career.github_url,
             "linkedin_url": profile.career.linkedin_url,
             "portfolio_url": profile.career.portfolio_url,
+            "work_history": profile.career.work_history,
+            "education_degree": profile.career.education_degree,
+            "education_university": profile.career.education_university,
+            "education_grad_year": profile.career.education_grad_year,
+            "education_gpa": profile.career.education_gpa,
+            "bio": profile.career.bio,
             "custom_qa_pairs": profile.career.custom_qa_pairs,
         },
         "financial": {
@@ -551,9 +557,48 @@ async def get_vault_profile():
     return mask_profile(profile)
 
 
+@app.get("/api/vault/profile")
+async def get_raw_vault_profile():
+    """Retrieve unmasked MasterIdentityProfile for identity setup and editing UI."""
+    vault = VaultManager()
+    try:
+        if vault.is_initialized() and not vault.is_locked:
+            profile = vault.load_profile()
+        else:
+            profile = create_sample_profile()
+    except Exception:
+        profile = create_sample_profile()
+
+    return profile.model_dump()
+
+
+@app.get("/api/vault/status")
+async def get_vault_status():
+    """Return vault initialization, lock state, and active identity summary."""
+    vault = VaultManager()
+    is_init = vault.is_initialized()
+    is_locked = vault.is_locked
+    active_name = None
+    active_email = None
+    if is_init and not is_locked:
+        try:
+            p = vault.load_profile()
+            active_name = p.core.full_name
+            active_email = p.core.email
+        except Exception:
+            pass
+    return {
+        "initialized": is_init,
+        "locked": is_locked,
+        "active_profile": active_name,
+        "active_email": active_email,
+    }
+
+
 @app.post("/api/vault")
+@app.post("/api/vault/profile")
 async def update_vault_profile(profile: MasterIdentityProfile):
-    """Encrypt and store updated MasterIdentityProfile in local vault."""
+    """Encrypt and store updated MasterIdentityProfile in local AES-256 vault."""
     vault = VaultManager()
     if vault.is_locked:
         settings = get_settings()
@@ -570,7 +615,8 @@ async def update_vault_profile(profile: MasterIdentityProfile):
         vault.save_profile(profile)
         return {
             "status": "saved",
-            "message": "Master identity profile encrypted and stored successfully.",
+            "message": f"Master identity profile for {profile.core.full_name} encrypted and persisted in vault.",
+            "profile": mask_profile(profile),
         }
     except Exception as e:
         raise HTTPException(
@@ -586,11 +632,22 @@ async def update_vault_profile(profile: MasterIdentityProfile):
 @app.get("/", response_class=HTMLResponse)
 async def dashboard_index(request: Request):
     """Render main SlothForm web dashboard."""
+    vault = VaultManager()
+    try:
+        if vault.is_initialized() and not vault.is_locked:
+            profile = vault.load_profile()
+        else:
+            profile = create_sample_profile()
+    except Exception:
+        profile = create_sample_profile()
+
     return templates.TemplateResponse(
         request=request,
         name="index.html",
         context={
             "title": "SlothForm — Autonomous Privacy-Preserving Form-Filling Agent",
+            "profile": profile,
+            "masked_profile": mask_profile(profile),
         },
     )
 
