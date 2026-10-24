@@ -157,7 +157,7 @@
                 </span>
               </div>
               <p id="runner-profile-meta" class="text-xs text-ash/80 line-clamp-1 font-light">
-                {{ profile.career.headline if profile else "Senior Full-Stack & Distributed Systems Engineer" }} — India (DTAA Article 12(2))
+                {{ profile.career.headline if profile else "Senior Full-Stack & Distributed Systems Engineer" }} — {{ profile.core.country if profile else "India" }}{% if profile and profile.tax and profile.tax.tax_treaty_article %} (DTAA {{ profile.tax.tax_treaty_article }}){% endif %}
               </p>
             </div>
           </div>
@@ -467,6 +467,13 @@
 
           <!-- Top Action Buttons -->
           <div class="flex flex-wrap items-center gap-3 shrink-0">
+            <button type="button" id="go-runner-btn" class="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2.5 border border-sapphire-hairline bg-abyss hover:bg-cobalt-panel text-quartz text-xs font-display font-medium transition-all shadow-sm">
+              <svg class="w-3.5 h-3.5 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span>Go to Form Runner</span>
+            </button>
+
             <button type="button" id="load-sample-btn" class="btn-ghost inline-flex items-center gap-2 rounded-full px-4 py-2.5 border border-sapphire-hairline bg-deep-sea hover:bg-cobalt-panel text-quartz text-xs font-display font-medium transition-all shadow-sm">
               <svg class="w-3.5 h-3.5 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
@@ -507,6 +514,10 @@
               <h4 id="toast-title" class="font-display text-xs font-semibold text-quartz">Profile Encrypted & Persisted</h4>
               <p id="toast-message" class="text-xs text-ash">Your master identity details have been written directly to the AES-256 encrypted vault.</p>
             </div>
+            <button type="button" id="toast-action-btn" class="btn-ghost inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-emerald-500/30 text-emerald-success hover:bg-emerald-500/10 text-xs font-display font-medium ml-2 transition-all">
+              <span>Open Form Runner</span>
+              <svg class="w-3 h-3 text-emerald-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
           </div>
           <button type="button" id="toast-close-btn" class="text-ash hover:text-white p-1">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -837,16 +848,16 @@ Senior Systems Engineer at TechCorp (2018-2021): Scaled core API services from 1
           <!-- File Upload Dropzone -->
           <div class="mb-4">
             <label class="form-label">Upload Resume File (.txt, .md, .pdf)</label>
-            <div class="border-2 border-dashed border-inkline hover:border-sapphire-hairline rounded-xl p-5 text-center bg-abyss transition-all">
+            <div id="resume-dropzone" class="border-2 border-dashed border-inkline hover:border-sapphire-hairline rounded-xl p-5 text-center bg-abyss transition-all cursor-pointer">
               <input type="file" id="resume-file-input" class="hidden" accept=".txt,.md,.pdf">
               <label for="resume-file-input" class="cursor-pointer flex flex-col items-center justify-center">
-                <svg class="w-8 h-8 text-frosted-lilac/70 mb-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-8 h-8 text-frosted-lilac/70 mb-2 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                   <polyline points="17 8 12 3 7 8"/>
                   <line x1="12" y1="3" x2="12" y2="15"/>
                 </svg>
-                <span class="text-xs font-display font-medium text-quartz">Click to choose or drag a resume file</span>
-                <span id="resume-upload-status" class="text-[11px] text-ash/60 mt-1">Supports Markdown (.md), Plaintext (.txt), or PDF</span>
+                <span class="text-xs font-display font-medium text-quartz pointer-events-none">Click to choose or drag & drop a resume file</span>
+                <span id="resume-upload-status" class="text-[11px] text-ash/60 mt-1 pointer-events-none">Supports Markdown (.md), Plaintext (.txt), or PDF</span>
               </label>
             </div>
           </div>
@@ -865,13 +876,21 @@ Senior Systems Engineer at TechCorp (2018-2021): Scaled core API services from 1
             </svg>
             <span>Changes persist immediately to local encrypted disk with AES-256-GCM AEAD authentication.</span>
           </div>
-          <button type="button" id="save-profile-btn-bottom" class="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 bg-quartz text-void font-display font-semibold text-xs hover:bg-mist transition-all active:scale-[0.98] shadow-md shrink-0">
-            <svg class="w-3.5 h-3.5 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <span>Save to Encrypted Vault</span>
-          </button>
+          <div class="flex items-center gap-3 shrink-0">
+            <button type="button" id="go-runner-btn-bottom" class="btn-ghost inline-flex items-center gap-2 rounded-full px-5 py-2.5 border border-sapphire-hairline bg-abyss hover:bg-cobalt-panel text-quartz text-xs font-display font-medium transition-all shadow-sm">
+              <svg class="w-3.5 h-3.5 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              <span>Go to Form Runner</span>
+            </button>
+            <button type="button" id="save-profile-btn-bottom" class="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 bg-quartz text-void font-display font-semibold text-xs hover:bg-mist transition-all active:scale-[0.98] shadow-md">
+              <svg class="w-3.5 h-3.5 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span>Save to Encrypted Vault</span>
+            </button>
+          </div>
         </div>
       </form>
     </div>

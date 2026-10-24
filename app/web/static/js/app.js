@@ -45,14 +45,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const profileForm = document.getElementById("profile-setup-form");
   const saveProfileBtn = document.getElementById("save-profile-btn");
   const saveProfileBtnBottom = document.getElementById("save-profile-btn-bottom");
+  const goRunnerBtn = document.getElementById("go-runner-btn");
+  const goRunnerBtnBottom = document.getElementById("go-runner-btn-bottom");
   const loadSampleBtn = document.getElementById("load-sample-btn");
   const clearProfileBtn = document.getElementById("clear-profile-btn");
   const vaultSaveToast = document.getElementById("vault-save-toast");
   const toastCloseBtn = document.getElementById("toast-close-btn");
+  const toastActionBtn = document.getElementById("toast-action-btn");
   const toastTitle = document.getElementById("toast-title");
   const toastMessage = document.getElementById("toast-message");
   const toastIconWrap = document.getElementById("toast-icon-wrap");
   const resumeFileInput = document.getElementById("resume-file-input");
+  const resumeDropzone = document.getElementById("resume-dropzone");
   const resumeUploadStatus = document.getElementById("resume-upload-status");
 
   // Profile Display Targets
@@ -97,6 +101,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (tabBtnRunner) tabBtnRunner.addEventListener("click", () => switchTab("runner"));
   if (tabBtnSetup) tabBtnSetup.addEventListener("click", () => switchTab("setup"));
+  if (goRunnerBtn) goRunnerBtn.addEventListener("click", () => switchTab("runner"));
+  if (goRunnerBtnBottom) goRunnerBtnBottom.addEventListener("click", () => switchTab("runner"));
+  if (toastActionBtn) toastActionBtn.addEventListener("click", () => switchTab("runner"));
   if (activeProfilePill) activeProfilePill.addEventListener("click", () => switchTab("setup"));
   if (runnerEditProfileBtn) runnerEditProfileBtn.addEventListener("click", () => switchTab("setup"));
 
@@ -161,12 +168,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------------------------------------------------------
   // Toast Notifications
   // ---------------------------------------------------------------------------
-  function showToast(title, message, isSuccess = true) {
+  function showToast(title, message, isSuccess = true, showAction = false) {
     if (!vaultSaveToast) return;
     if (toastTimeout) clearTimeout(toastTimeout);
 
     if (toastTitle) toastTitle.textContent = title;
     if (toastMessage) toastMessage.textContent = message;
+
+    if (toastActionBtn) {
+      toastActionBtn.style.display = showAction ? "inline-flex" : "none";
+    }
 
     if (isSuccess) {
       vaultSaveToast.className = "toast-banner mt-4 p-4 rounded-xl border border-emerald-success/40 bg-deep-sea flex items-center justify-between gap-3 shadow-lg";
@@ -194,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     vaultSaveToast.style.display = "flex";
     toastTimeout = setTimeout(() => {
       vaultSaveToast.style.display = "none";
-    }, 6000);
+    }, 8000);
   }
 
   if (toastCloseBtn) {
@@ -434,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const resData = await res.json();
       updateProfileDisplays(payload);
-      showToast("Vault Encrypted & Persisted", `Master identity profile for ${fullName} successfully written to AES-256 encrypted vault!`, true);
+      showToast("Vault Encrypted & Persisted", `Master identity profile for ${fullName} successfully written to AES-256 encrypted vault!`, true, true);
       appendLog("VAULT", `Master profile updated: ${fullName} (AES-256-GCM AEAD encrypted)`);
     } catch (err) {
       showToast("Vault Encryption Error", err.message, false);
@@ -523,9 +534,9 @@ document.addEventListener("DOMContentLoaded", () => {
     clearProfileBtn.addEventListener("click", () => {
       if (confirm("Clear all profile fields to start from a blank slate?")) {
         populateFormFields({
-          core: { country: "India", citizenship: "India" },
-          tax: { tax_residence_country: "India", tax_treaty_country: "India", claim_treaty_benefits: true },
-          career: { years_of_experience: 0, skills: [] },
+          core: { full_name: "", email: "", phone: "", address_line1: "", city: "", state_province: "", postal_code: "", country: "", citizenship: "" },
+          tax: { tax_residence_country: "", pan: "", tax_treaty_country: "", tax_treaty_article: "", treaty_withholding_rate: "", claim_treaty_benefits: false },
+          career: { headline: "", years_of_experience: 0, skills: [], resume_markdown: "", bio: "", work_history: "", education_degree: "", education_university: "", education_grad_year: "", education_gpa: "" },
           financial: {},
         });
         showToast("Form Cleared", "Enter your candidate details and click 'Save to Encrypted Vault'.");
@@ -534,36 +545,93 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------------------------------------------------------
-  // Resume File Upload (FileReader for Instant Local Parsing)
+  // Resume File Upload (Server-Side Extraction with Client Fallback)
   // ---------------------------------------------------------------------------
+  async function handleResumeUpload(file) {
+    if (!file) return;
+
+    const fileName = file.name;
+    const fileExt = fileName.split(".").pop().toLowerCase();
+
+    if (resumeUploadStatus) {
+      resumeUploadStatus.textContent = `Processing ${fileName} (${(file.size / 1024).toFixed(1)} KB)...`;
+    }
+
+    // Try server-side parsing (supports .pdf, .txt, .md)
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/vault/resume", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.text) {
+          setVal("career-resume-markdown", data.text);
+          const pageInfo = data.pages > 1 ? `, ${data.pages} pages` : "";
+          if (resumeUploadStatus) {
+            resumeUploadStatus.textContent = `Parsed: ${fileName} (${(data.size_bytes / 1024).toFixed(1)} KB${pageInfo})`;
+          }
+          showToast("Resume Parsed", `Extracted text from ${fileName} and loaded into editor.`, true);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("Backend resume extraction failed, falling back to client reader:", err);
+    }
+
+    // Fallback for plain text / markdown files
+    if (fileExt === "txt" || fileExt === "md") {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const content = evt.target.result;
+        setVal("career-resume-markdown", content);
+        if (resumeUploadStatus) {
+          resumeUploadStatus.textContent = `Loaded: ${fileName} (${(file.size / 1024).toFixed(1)} KB)`;
+        }
+        showToast("Resume Imported", `Text extracted from ${fileName} and loaded into editor.`, true);
+      };
+      reader.readAsText(file);
+    } else {
+      if (resumeUploadStatus) {
+        resumeUploadStatus.textContent = `Selected: ${fileName} (Attached)`;
+      }
+      showToast("File Attached", `Selected ${fileName}. Please confirm or paste markdown text below.`, false);
+    }
+  }
+
   if (resumeFileInput) {
     resumeFileInput.addEventListener("change", (e) => {
       const file = e.target.files && e.target.files[0];
-      if (!file) return;
+      handleResumeUpload(file);
+    });
+  }
 
-      const fileName = file.name;
-      const fileExt = fileName.split(".").pop().toLowerCase();
+  if (resumeDropzone) {
+    ["dragenter", "dragover"].forEach((eventName) => {
+      resumeDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        resumeDropzone.classList.add("border-frosted-lilac", "bg-cobalt-panel/40");
+      });
+    });
 
-      if (resumeUploadStatus) {
-        resumeUploadStatus.textContent = `Reading: ${fileName} (${(file.size / 1024).toFixed(1)} KB)...`;
-      }
+    ["dragleave", "drop"].forEach((eventName) => {
+      resumeDropzone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        resumeDropzone.classList.remove("border-frosted-lilac", "bg-cobalt-panel/40");
+      });
+    });
 
-      if (fileExt === "txt" || fileExt === "md") {
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          const content = evt.target.result;
-          setVal("career-resume-markdown", content);
-          if (resumeUploadStatus) {
-            resumeUploadStatus.textContent = `Successfully loaded: ${fileName} (${(file.size / 1024).toFixed(1)} KB)`;
-          }
-          showToast("Resume Imported", `Text extracted from ${fileName} and loaded into resume editor.`);
-        };
-        reader.readAsText(file);
-      } else {
-        if (resumeUploadStatus) {
-          resumeUploadStatus.textContent = `Selected: ${fileName} (Attached for upload)`;
-        }
-        showToast("File Attached", `Selected ${fileName}. Please confirm or paste markdown text below.`);
+    resumeDropzone.addEventListener("drop", (e) => {
+      const dt = e.dataTransfer;
+      const file = dt && dt.files && dt.files[0];
+      if (file) {
+        handleResumeUpload(file);
       }
     });
   }
@@ -788,6 +856,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         updatePipelineStage(stage, percentage);
         appendLog(stage, message, timestamp);
+
+        if (eventData.diff) {
+          populateDiffTable({ diff: eventData.diff });
+        }
 
         if (statusText) {
           statusText.textContent = `${stage} (${percentage}%) — ${message}`;

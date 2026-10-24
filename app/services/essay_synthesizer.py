@@ -499,11 +499,12 @@ class EssaySynthesizer:
         paragraphs = []
 
         # Paragraph 1: Core positioning and verified experience
+        bio_prefix = f" {career_profile.bio.strip()}" if career_profile.bio and career_profile.bio.strip() else ""
         if not skills_list:
             p1 = (
                 f"As a {headline} with over {yoe} years of hands-on experience, "
                 f"my engineering philosophy centers on architectural resilience, deep observability, "
-                f"and end-to-end software craftsmanship. Throughout my career, I have specialized in "
+                f"and end-to-end software craftsmanship.{bio_prefix} Throughout my career, I have specialized in "
                 f"designing high-throughput distributed architectures, robust asynchronous systems, "
                 f"and scalable software systems grounded in clean maintainable code, test-driven "
                 f"development, and rigorous technical standards."
@@ -512,7 +513,7 @@ class EssaySynthesizer:
             p1 = (
                 f"As a {headline} with over {yoe} years of hands-on experience, "
                 f"my engineering philosophy centers on architectural resilience, deep observability, "
-                f"and end-to-end software craftsmanship. Throughout my career, I have specialized in "
+                f"and end-to-end software craftsmanship.{bio_prefix} Throughout my career, I have specialized in "
                 f"designing high-throughput distributed architectures, robust asynchronous systems, "
                 f"and scalable software infrastructure with deep technical specialization in {skills_list[0]}."
             )
@@ -521,7 +522,7 @@ class EssaySynthesizer:
             p1 = (
                 f"As a {headline} with over {yoe} years of hands-on experience, "
                 f"my engineering philosophy centers on architectural resilience, deep observability, "
-                f"and end-to-end software craftsmanship. Throughout my career, I have specialized in "
+                f"and end-to-end software craftsmanship.{bio_prefix} Throughout my career, I have specialized in "
                 f"designing high-throughput distributed architectures, robust asynchronous systems, "
                 f"and scalable software infrastructure utilizing {primary_skills}."
             )
@@ -555,13 +556,25 @@ class EssaySynthesizer:
                     f"service architectures built with {skills_list[2]}"
                 )
 
-            p2 = (
-                f"When confronting complex technical challenges, I approach system design with a focus "
-                f"on decoupling critical paths and optimizing latency. In recent initiatives, I led "
-                f"the end-to-end implementation of event-driven service pipelines {tech_clause}. "
-                f"This disciplined approach ensures high availability, predictable performance, "
-                f"and seamless cross-functional team collaboration."
-            )
+            if career_profile.work_history and career_profile.work_history.strip():
+                wh_first = career_profile.work_history.strip().split("\n")[0].strip().rstrip(".")
+                if len(wh_first) > 100:
+                    wh_first = wh_first[:97] + "..."
+                p2 = (
+                    f"In my career experience, including {wh_first}, I have confronted "
+                    f"complex technical challenges by decoupling critical paths and optimizing performance. "
+                    f"In these initiatives, I led the delivery of resilient services {tech_clause}. "
+                    f"This disciplined approach ensures high availability, predictable performance, "
+                    f"and seamless cross-functional team collaboration."
+                )
+            else:
+                p2 = (
+                    f"When confronting complex technical challenges, I approach system design with a focus "
+                    f"on decoupling critical paths and optimizing latency. In recent initiatives, I led "
+                    f"the end-to-end implementation of event-driven service pipelines {tech_clause}. "
+                    f"This disciplined approach ensures high availability, predictable performance, "
+                    f"and seamless cross-functional team collaboration."
+                )
         paragraphs.append(p2)
 
         # Paragraph 3: Future impact and collaboration

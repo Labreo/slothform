@@ -303,15 +303,34 @@ class UltramarineClient:
             elif "company" in flabel or "org" in fid or "current employer" in flabel or fname == "org":
                 val = "Self-Employed / Independent Contractor"
 
+            # Work History / Past Experience
+            elif (
+                "work_history" in fctx
+                or "work history" in flabel
+                or "employment history" in flabel
+                or "past employers" in flabel
+                or "experience" in flabel
+            ):
+                val = user_profile.career.work_history or user_profile.career.headline
+
+            # Professional Bio / Summary
+            elif (
+                "bio" in fctx
+                or "summary" in fctx
+                or "about you" in flabel
+                or "about yourself" in flabel
+            ):
+                val = user_profile.career.bio or user_profile.career.headline
+
             # Education / Degree / University
             elif "university" in fctx or "school" in fctx or "college" in fctx:
-                val = user_profile.career.education_university or "Indian Institute of Technology, Bombay"
+                val = user_profile.career.education_university or ""
             elif "degree" in fctx:
-                val = user_profile.career.education_degree or "Bachelor of Technology in Computer Science"
+                val = user_profile.career.education_degree or ""
             elif "graduation" in fctx or "grad_year" in fctx:
-                val = user_profile.career.education_grad_year or "2016"
+                val = user_profile.career.education_grad_year or ""
             elif "gpa" in fctx:
-                val = user_profile.career.education_gpa or "3.85 / 4.0"
+                val = user_profile.career.education_gpa or ""
 
             # Street Address
             elif "address" in flabel or "address_line1" in fid or "street" in flabel:
@@ -352,11 +371,12 @@ class UltramarineClient:
             elif field.field_type == FieldType.SELECT:
                 # Match options against profile if available
                 matched_val = None
+                country_clean = (user_profile.core.country or "").strip().lower()
                 if field.options:
                     for opt in field.options:
                         olabel = opt.label.lower()
                         oval = opt.value.lower()
-                        if "india" in olabel or "india" in oval:
+                        if country_clean and (country_clean in olabel or country_clean in oval):
                             matched_val = opt.value
                             break
                         if any(skill.lower() in olabel for skill in user_profile.career.skills):

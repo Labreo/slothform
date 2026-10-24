@@ -74,10 +74,16 @@ class FillOrchestrator:
     ) -> FillResult:
         """Execute end-to-end form fill pipeline across all 6 stages."""
 
-        def report_progress(stage: str, percentage: int) -> None:
+        def report_progress(stage: str, percentage: int, extra: Optional[Dict[str, Any]] = None) -> None:
             if progress_callback:
                 try:
-                    progress_callback(stage, percentage)
+                    sig = inspect.signature(progress_callback)
+                    if len(sig.parameters) >= 3 or any(
+                        p.kind == inspect.Parameter.VAR_KEYWORD for p in sig.parameters.values()
+                    ):
+                        progress_callback(stage, percentage, extra)
+                    else:
+                        progress_callback(stage, percentage)
                 except Exception as e:
                     logger.debug(f"Progress callback notification error: {e}")
 
@@ -188,11 +194,32 @@ class FillOrchestrator:
                     session_id=session_id,
                 )
 
+            # Personalize candidate synthetic resume document if document generator is present
+            if hasattr(self, "form_filler") and hasattr(self.form_filler, "doc_generator"):
+                try:
+                    prof_data = {
+                        "name": profile.core.full_name,
+                        "email": profile.core.email,
+                        "phone": profile.core.phone,
+                        "location": f"{profile.core.city}, {profile.core.country}",
+                        "linkedin": profile.career.linkedin_url,
+                        "github": profile.career.github_url,
+                        "summary": profile.career.bio or profile.career.headline,
+                        "skills": profile.career.skills,
+                    }
+                    if profile.career.work_history:
+                        prof_data["summary"] = f"{prof_data['summary']}\n{profile.career.work_history}"
+                    custom_resume_path = self.form_filler.doc_generator.generate_resume(
+                        profile=prof_data,
+                        filename=f"resume_{session_id}.pdf",
+                    )
+                    fill_plan.resume_path = custom_resume_path
+                except Exception as resume_err:
+                    logger.debug(f"Resume generation fallback notice: {resume_err}")
+
             # ------------------------------------------------------------------
             # Stage 4: CIBA_CONSENT (70%)
             # ------------------------------------------------------------------
-            report_progress("CIBA_CONSENT", 70)
-
             # Map field items to classified attribute names for RFC 9396 RAR diff
             field_dict: Dict[str, Any] = {}
             for item in fill_plan.items:
@@ -248,6 +275,12 @@ class FillOrchestrator:
                 field_values=field_dict,
                 dry_run=dry_run,
             )
+
+            diff_items = [
+                item.model_dump() if hasattr(item, "model_dump") else item.__dict__
+                for item in diff.items
+            ]
+            report_progress("CIBA_CONSENT", 70, {"diff": diff_items})
 
             # Initiate CIBA Backchannel Authorization
             try:

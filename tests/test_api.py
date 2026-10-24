@@ -426,3 +426,55 @@ def test_dashboard_contains_profile_setup_ui_elements(client):
     assert 'id="load-sample-btn"' in html
     assert 'id="clear-profile-btn"' in html
     assert 'id="vault-save-toast"' in html
+    assert 'id="go-runner-btn"' in html
+    assert 'id="resume-dropzone"' in html
+
+
+def test_upload_resume_file_txt_and_md(client):
+    """Verify POST /api/vault/resume successfully parses plaintext and markdown resumes."""
+    sample_md = b"# Jane Doe\n\nExperienced Cloud Architect with 10+ years designing distributed systems."
+    response = client.post(
+        "/api/vault/resume",
+        files={"file": ("resume.md", sample_md, "text/markdown")},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["filename"] == "resume.md"
+    assert "Jane Doe" in data["text"]
+    assert "Experienced Cloud Architect" in data["text"]
+
+
+def test_upload_resume_file_pdf(client):
+    """Verify POST /api/vault/resume extracts text from real PDF documents."""
+    from app.services.document_generator import SyntheticDocumentGenerator
+
+    gen = SyntheticDocumentGenerator()
+    pdf_path = gen.generate_resume(
+        profile={"name": "Vikram Sethi", "email": "vikram@example.com", "summary": "Senior SRE specialized in Kubernetes."}
+    )
+
+    with open(pdf_path, "rb") as f:
+        pdf_bytes = f.read()
+
+    response = client.post(
+        "/api/vault/resume",
+        files={"file": ("vikram_resume.pdf", pdf_bytes, "application/pdf")},
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "success"
+    assert data["filename"] == "vikram_resume.pdf"
+    assert data["pages"] >= 1
+    assert "Vikram Sethi" in data["text"] or "Kubernetes" in data["text"]
+
+
+def test_upload_resume_file_unsupported_format(client):
+    """Verify POST /api/vault/resume rejects unsupported file extensions."""
+    response = client.post(
+        "/api/vault/resume",
+        files={"file": ("malicious.exe", b"binary_data", "application/octet-stream")},
+    )
+    assert response.status_code == 400
+    assert "Unsupported file format" in response.json()["detail"]
+

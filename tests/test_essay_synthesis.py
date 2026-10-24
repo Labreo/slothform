@@ -169,3 +169,26 @@ def test_essay_redacts_case_insensitive_pan(synthesizer, pan_variant):
     assert pan_variant not in essay, f"Vulnerability: PAN variant '{pan_variant}' leaked into essay!"
     assert "[REDACTED]" in essay
 
+
+def test_essay_incorporates_custom_bio_and_work_history(synthesizer):
+    """Verify that customized user bio and work history are reflected in synthesized essay."""
+    profile = CareerProfile(
+        headline="Principal Autonomous Systems Architect",
+        years_of_experience=10,
+        skills=["Python", "FastAPI", "Rust", "Distributed Systems"],
+        resume_markdown="# Profile",
+        github_url="https://github.com/lead-dev",
+        linkedin_url="https://linkedin.com/in/lead-dev",
+        work_history="Founding Architect at QuantumStream (2020-2025): Led real-time event pipeline.",
+        bio="Pioneering privacy-preserving distributed agent architectures.",
+        custom_qa_pairs={},
+    )
+    essay = synthesizer.synthesize_essay("Tell us about your background.", profile)
+    words = essay.split()
+
+    assert 150 <= len(words) <= 250
+    assert "privacy-preserving distributed agent architectures" in essay or "Pioneering" in essay
+    assert "Founding Architect at QuantumStream" in essay or "QuantumStream" in essay
+    assert "Principal Autonomous Systems Architect" in essay
+
+

@@ -17,7 +17,7 @@ import time
 from typing import Any, Callable, Dict, List, Optional, Set
 import uuid
 
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import FastAPI, File, HTTPException, Request, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -179,15 +179,19 @@ async def run_fill_pipeline(
 
     tasks_db[task_id]["status"] = "running"
 
-    def progress_callback(stage: str, percentage: int) -> None:
+    def progress_callback(stage: str, percentage: int, extra: Optional[Dict[str, Any]] = None) -> None:
         now = time.time()
         desc = STAGE_DESCRIPTIONS.get(stage, f"Executing {stage}...")
-        event = {
+        event: Dict[str, Any] = {
             "stage": stage,
             "percentage": percentage,
             "message": desc,
             "timestamp": now,
         }
+        if extra and isinstance(extra, dict):
+            event.update(extra)
+            if "diff" in extra and task_id in tasks_db:
+                tasks_db[task_id]["diff"] = extra["diff"]
         if task_id in tasks_db:
             tasks_db[task_id]["current_stage"] = stage
             tasks_db[task_id]["progress_percentage"] = percentage
@@ -623,6 +627,64 @@ async def update_vault_profile(profile: MasterIdentityProfile):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to encrypt and persist profile: {e}",
         )
+
+
+@app.post("/api/vault/resume")
+async def upload_resume_file(file: UploadFile = File(...)):
+    """Upload and extract plain/markdown text from candidate resume (.txt, .md, .pdf)."""
+    if not file.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No resume file selected.",
+        )
+
+    ext = file.filename.split(".")[-1].lower()
+    content = await file.read()
+
+    extracted_text = ""
+    pages = 1
+    if ext in ("txt", "md"):
+        try:
+            extracted_text = content.decode("utf-8")
+        except UnicodeDecodeError:
+            extracted_text = content.decode("latin-1", errors="replace")
+    elif ext == "pdf":
+        try:
+            import io
+            import pypdf
+
+            reader = pypdf.PdfReader(io.BytesIO(content))
+            pages = len(reader.pages)
+            page_chunks = []
+            for page in reader.pages:
+                txt = page.extract_text() or ""
+                if txt.strip():
+                    page_chunks.append(txt.strip())
+            extracted_text = "\n\n".join(page_chunks)
+            if not extracted_text.strip():
+                extracted_text = (
+                    f"# Candidate Resume: {file.filename}\n\n"
+                    "(Scanned or image-only PDF uploaded. Please review or paste plain text markdown below.)"
+                )
+        except Exception as e:
+            logger.warning(f"PDF extraction error for {file.filename}: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"Could not extract text from PDF resume: {e}",
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Unsupported file format '.{ext}'. Supported formats are: .pdf, .txt, .md",
+        )
+
+    return {
+        "status": "success",
+        "filename": file.filename,
+        "size_bytes": len(content),
+        "pages": pages,
+        "text": extracted_text,
+    }
 
 
 # ------------------------------------------------------------------------------
