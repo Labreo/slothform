@@ -148,7 +148,7 @@ AgentQL operates in a deep-space command-center register: near-black canvas, tig
 
 ### 1. Navigation Header
 - **Layout**: Fixed/sticky at top (`backdrop-filter: blur(16px)`), height 64px, hairline bottom border (`#172540`).
-- **Brand Mark**: Sloth mascot logo (`🦥`) with glowing radial backlight, sleek typography ("SlothForm" in Figtree 600, uppercase tracked kicker "AUTONOMOUS FORM AGENT").
+- **Brand Mark**: SlothForm vector shield mark (inline SVG) with glowing radial backlight, sleek typography ("SlothForm" in Figtree 600, uppercase tracked kicker "AUTONOMOUS FORM AGENT").
 - **Vault Status Indicator**: Pill badge with animated pulsing glowing dot (`#10b981`), monospace AES-256 vault indicator.
 
 ### 2. Command Deck & Hero

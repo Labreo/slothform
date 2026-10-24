@@ -90,7 +90,7 @@ def fill(
     if dry_run:
         console.print(
             Panel.fit(
-                "[bold #f59e0b]⚠️  DRY-RUN SAFETY ACTIVE: Submissions are blocked. "
+                "[bold #f59e0b][SAFETY ACTIVE] DRY-RUN SAFETY ACTIVE: Submissions are blocked. "
                 "Submit button will be outlined in amber. Replay & screenshot will be captured.[/bold #f59e0b]",
                 title="[bold #f59e0b]DRY-RUN SAFETY GUARD[/bold #f59e0b]",
                 border_style="#f59e0b",
@@ -99,7 +99,7 @@ def fill(
     else:
         console.print(
             Panel.fit(
-                "[bold red]🚨 LIVE SUBMISSION MODE: Dry-run safety guard is DISABLED. "
+                "[bold red][LIVE MODE] LIVE SUBMISSION MODE: Dry-run safety guard is DISABLED. "
                 "The form WILL be submitted to the live endpoint upon approval.[/bold red]",
                 title="[bold red]LIVE DISPATCH WARNING[/bold red]",
                 border_style="red",
@@ -172,7 +172,7 @@ def fill(
             console.print(f"\n[bold red]Error executing fill pipeline:[/bold red] {e}")
             console.print(
                 Panel.fit(
-                    f"[bold red]⛔ SUBMISSION REFUSED (Refusal Invariant Enforced):[/bold red]\n"
+                    f"[bold red][REFUSED] SUBMISSION REFUSED (Refusal Invariant Enforced):[/bold red]\n"
                     f"{e}\n\n"
                     f"[yellow]Execution halted before final submission because human CIBA consent was denied, rejected, or missing.[/yellow]",
                     border_style="red",
@@ -422,7 +422,7 @@ def health() -> None:
     table.add_row("Auth0 CIBA Gate", "AUTH0_DOMAIN", a_status, a_details)
 
     console.print(table)
-    console.print("[green]✓ System readiness verified successfully.[/green]")
+    console.print("[green][OK] System readiness verified successfully.[/green]")
 
 
 def main():

@@ -1,4 +1,4 @@
-# SlothForm 🦥
+# SlothForm
 
 > **The Autonomous, Privacy-Preserving Form-Filling Agent**
 > Built for the **Hacktoberfest Open-Source AI Challenge: Week 3 ("Slow and Steady")**
@@ -10,7 +10,7 @@
 
 ---
 
-## 🎯 The Sloth Premise
+## The Sloth Premise
 
 Filling out 15-page ATS job applications with 6 custom technical essay questions, or navigating tedious international contractor compliance forms (W-8BEN, Wise payment setups), is the ultimate developer chore.
 
@@ -23,7 +23,7 @@ Filling out 15-page ATS job applications with 6 custom technical essay questions
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -56,7 +56,7 @@ Filling out 15-page ATS job applications with 6 custom technical essay questions
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
 * **Cloud Headless Execution**: Powered by Browserbase for remote Chromium automation, stealth CAPTCHA evasion, and shareable session replays.
 * **Specialized Document Reasoning**: Native Paper Instruments Ultramarine client generates high-fidelity form payloads without hallucinating.
@@ -66,7 +66,7 @@ Filling out 15-page ATS job applications with 6 custom technical essay questions
 
 ---
 
-## 🛠️ Quickstart
+## Quickstart
 
 ### 1. Prerequisites
 * Python 3.11+

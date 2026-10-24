@@ -63,15 +63,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Modal Handlers
+  if (diffModal) {
+    diffModal.style.display = "none";
+  }
+
   function openDiffModal() {
     if (diffModal) {
       diffModal.classList.add("active");
+      diffModal.style.display = "flex";
     }
   }
 
   function closeDiffModal() {
     if (diffModal) {
       diffModal.classList.remove("active");
+      diffModal.style.display = "none";
     }
   }
 

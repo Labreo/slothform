@@ -578,10 +578,22 @@ input:checked + .toggle-slider:before {
   background: #111524;
 }
 
+@keyframes pulse-step {
+  0%, 100% {
+    border-color: var(--color-aurora-purple);
+    box-shadow: 0 0 20px rgba(98, 95, 255, 0.25), inset 0 0 15px rgba(98, 95, 255, 0.08);
+  }
+  50% {
+    border-color: var(--color-frosted-lilac);
+    box-shadow: 0 0 30px rgba(133, 166, 233, 0.4), inset 0 0 20px rgba(98, 95, 255, 0.15);
+  }
+}
+
 .stage-step.active {
   border-color: var(--color-aurora-purple);
   box-shadow: 0 0 20px rgba(98, 95, 255, 0.25), inset 0 0 15px rgba(98, 95, 255, 0.08);
   background: var(--color-cobalt-panel);
+  animation: pulse-step 2s infinite ease-in-out;
 }
 
 .stage-step.completed {
@@ -598,12 +610,27 @@ input:checked + .toggle-slider:before {
   transition: var(--transition);
 }
 
+.stage-icon svg {
+  color: inherit;
+  stroke: currentColor;
+}
+
 .stage-step.active .stage-icon {
   color: var(--color-frosted-lilac);
 }
 
+.stage-step.active .stage-icon svg {
+  color: var(--color-frosted-lilac);
+  filter: drop-shadow(0 0 6px rgba(133, 166, 233, 0.5));
+}
+
 .stage-step.completed .stage-icon {
   color: var(--emerald-success);
+}
+
+.stage-step.completed .stage-icon svg {
+  color: var(--emerald-success);
+  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
 }
 
 .stage-title {
@@ -880,7 +907,7 @@ input:checked + .toggle-slider:before {
    ========================================================================== */
 
 .modal-overlay {
-  display: none;
+  display: none !important;
   position: fixed;
   top: 0;
   left: 0;
@@ -896,7 +923,7 @@ input:checked + .toggle-slider:before {
 }
 
 .modal-overlay.active {
-  display: flex;
+  display: flex !important;
 }
 
 .modal-content {

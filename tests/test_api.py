@@ -229,12 +229,17 @@ def test_web_dashboard_html_routes(client):
     assert 'id="stage-progress-bar"' in html
     assert 'id="browserbase-replay-frame"' in html
     assert 'id="diff-inspection-modal"' in html
+    assert 'style="display: none;"' in html
     assert 'id="vault-status-badge"' in html
     assert 'id="target-url-input"' in html
     assert 'id="ciba-consent-card"' in html
     assert 'id="ciba-approve-btn"' in html
     assert 'id="ciba-reject-btn"' in html
     assert "SlothForm" in html
+
+    # Verify no emojis in HTML
+    for forbidden_emoji in ["🦥", "🛡️", "⚡", "📋", "↗", "✓", "✗", "⏳", "⚠️"]:
+        assert forbidden_emoji not in html
 
     # Task detail view
     task_res = client.get("/tasks/task_abc_123")
@@ -246,6 +251,11 @@ def test_web_dashboard_html_routes(client):
     assert 'id="browserbase-replay-frame"' in task_html
     assert 'id="ciba-consent-card"' in task_html
     assert 'id="target-url-link"' in task_html
+    assert 'id="diff-inspection-modal"' in task_html
+    assert 'style="display: none;"' in task_html
+
+    for forbidden_emoji in ["🦥", "🛡️", "⚡", "📋", "↗", "✓", "✗", "⏳", "⚠️"]:
+        assert forbidden_emoji not in task_html
 
 
 def test_post_task_consent_approval(client):
