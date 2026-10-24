@@ -12,6 +12,8 @@
 
   <!-- Tailwind CSS CDN + Theme Token Configuration matching Refero Styles AgentQL Design System -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- HLS.js for native Browserbase session video replay streaming -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -373,7 +375,22 @@
             <a id="replay-external-link" href="#" target="_blank" class="replay-link font-mono text-xs text-signal-blue hover:underline"></a>
           </div>
           <div id="replay-container" class="replay-container crt-screen w-full aspect-video bg-black rounded-xl border border-inkline overflow-hidden relative flex items-center justify-center">
-            <iframe id="browserbase-replay-frame" class="replay-frame w-full h-full border-none" src="" style="display: none;" allowfullscreen></iframe>
+            <!-- Native / HLS Replay Video Player for recorded sessions -->
+            <video id="browserbase-video-player" class="w-full h-full object-contain bg-black" controls playsinline style="display: none;"></video>
+
+            <!-- Audit Screenshot View (Dry-Run Amber Glow & Verification) -->
+            <div id="browserbase-screenshot-wrap" class="w-full h-full relative flex items-center justify-center bg-void overflow-hidden" style="display: none;">
+              <img id="browserbase-screenshot-img" class="w-full h-full object-contain cursor-pointer" alt="Session Audit Screenshot" title="Click to view full resolution" />
+              <div class="absolute bottom-3 left-3 bg-void/85 backdrop-blur border border-obsidian-edge rounded-lg px-3 py-1.5 text-[11px] font-mono text-ash flex items-center gap-2 shadow-lg">
+                <span class="w-2 h-2 rounded-full bg-amber-primary animate-pulse"></span>
+                <span>Audit Screenshot Recorded</span>
+              </div>
+            </div>
+
+            <!-- Live DevTools Iframe (Only used during live execution if debugger URL available) -->
+            <iframe id="browserbase-replay-frame" class="replay-frame w-full h-full border-none" src="" style="display: none;" allow="clipboard-read; clipboard-write" allowfullscreen></iframe>
+
+            <!-- Default Empty Placeholder -->
             <div id="replay-placeholder" class="replay-placeholder flex flex-col items-center justify-center p-8 text-center text-ash">
               <svg class="w-12 h-12 text-ash/40 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                 <rect width="20" height="14" x="2" y="3" rx="2"/>

@@ -478,3 +478,33 @@ def test_upload_resume_file_unsupported_format(client):
     assert response.status_code == 400
     assert "Unsupported file format" in response.json()["detail"]
 
+
+def test_get_screenshot_endpoints(client):
+    """Verify GET /api/screenshot/{filename} serves files safely."""
+    import os
+    # Create a test screenshot
+    os.makedirs("artifacts/screenshots", exist_ok=True)
+    test_shot = "artifacts/screenshots/test_audit_shot.png"
+    with open(test_shot, "wb") as f:
+        f.write(b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15c4")
+
+    try:
+        res = client.get("/api/screenshot/test_audit_shot.png")
+        assert res.status_code == 200
+        assert res.headers["content-type"] == "image/png"
+
+        # 404 for nonexistent screenshot
+        res_404 = client.get("/api/screenshot/nonexistent_shot.png")
+        assert res_404.status_code == 404
+    finally:
+        if os.path.exists(test_shot):
+            os.remove(test_shot)
+
+
+def test_get_session_replay_m3u8_local_simulation(client):
+    """Verify local simulation session IDs are cleanly rejected with 404."""
+    res = client.get("/api/sessions/sess_local_12345/replay.m3u8")
+    assert res.status_code == 404
+    assert "Local simulation sessions" in res.json()["detail"]
+
+

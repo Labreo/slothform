@@ -919,21 +919,80 @@ document.addEventListener("DOMContentLoaded", () => {
       cibaTimerBadge.style.color = "var(--emerald-success)";
     }
 
-    const replayUrl =
-      result.replay_url ||
-      result.live_view_url ||
-      `https://browserbase.com/sessions/${result.session_id || taskId}`;
-    if (replayFrame) {
-      replayFrame.src = replayUrl;
-      replayFrame.style.display = "block";
-    }
-    const placeholder = document.getElementById("replay-placeholder");
-    if (placeholder) placeholder.style.display = "none";
+    const sessionId = result.session_id || (result.result && result.result.session_id) || taskId;
+    const isLocalSim = !sessionId || sessionId.startsWith("sess_local_") || sessionId.startsWith("sess_mock_");
 
+    // Clean up live iframe to eliminate any cross-origin Google OAuth 403 errors
+    if (replayFrame) {
+      replayFrame.style.display = "none";
+      replayFrame.src = "about:blank";
+    }
+
+    // External Browserbase Dashboard Link (always opens in a separate tab with user credentials)
     const replayLink = document.getElementById("replay-external-link");
     if (replayLink) {
-      replayLink.href = replayUrl;
-      replayLink.textContent = "Open in Browserbase";
+      if (isLocalSim) {
+        replayLink.style.display = "none";
+      } else {
+        replayLink.href = `https://www.browserbase.com/sessions/${encodeURIComponent(sessionId)}`;
+        replayLink.target = "_blank";
+        replayLink.rel = "noopener noreferrer";
+        replayLink.innerHTML = `<span>Open in Browserbase</span><svg class="w-3.5 h-3.5 inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>`;
+        replayLink.style.display = "inline-flex";
+      }
+    }
+
+    const placeholder = document.getElementById("replay-placeholder");
+    const videoEl = document.getElementById("browserbase-video-player");
+    const shotWrap = document.getElementById("browserbase-screenshot-wrap");
+    const shotImg = document.getElementById("browserbase-screenshot-img");
+
+    // Resolve screenshot URL
+    let screenshotUrl = null;
+    const rawShotPath = result.screenshot_path || (result.result && result.result.screenshot_path);
+    if (rawShotPath) {
+      const parts = rawShotPath.split(/[\\/]/);
+      const filename = parts[parts.length - 1];
+      screenshotUrl = `/api/screenshot/${encodeURIComponent(filename)}`;
+    }
+
+    function renderScreenshotFallback() {
+      if (videoEl) {
+        videoEl.pause();
+        videoEl.style.display = "none";
+      }
+      if (placeholder) placeholder.style.display = "none";
+      if (shotWrap && shotImg && screenshotUrl) {
+        shotImg.src = screenshotUrl;
+        shotImg.onclick = () => window.open(screenshotUrl, "_blank");
+        shotWrap.style.display = "flex";
+      } else if (placeholder) {
+        placeholder.style.display = "flex";
+      }
+    }
+
+    // For cloud Browserbase sessions, stream the HLS video recording
+    if (!isLocalSim && videoEl && window.Hls && Hls.isSupported()) {
+      const m3u8Url = `/api/sessions/${encodeURIComponent(sessionId)}/replay.m3u8`;
+      const hls = new Hls({ enableWorker: false });
+      hls.loadSource(m3u8Url);
+      hls.attachMedia(videoEl);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        if (placeholder) placeholder.style.display = "none";
+        if (shotWrap) shotWrap.style.display = "none";
+        videoEl.style.display = "block";
+        videoEl.play().catch(() => {});
+      });
+
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          hls.destroy();
+          renderScreenshotFallback();
+        }
+      });
+    } else {
+      renderScreenshotFallback();
     }
 
     populateDiffTable(result);

@@ -19,9 +19,10 @@ import uuid
 
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.responses import FileResponse, HTMLResponse, Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import httpx
 from pydantic import BaseModel
 
 from app.config import get_settings
@@ -119,6 +120,8 @@ app.add_middleware(
 
 # Mount static files and Jinja2 templates
 app.mount("/static", StaticFiles(directory="app/web/static"), name="static")
+os.makedirs("artifacts/screenshots", exist_ok=True)
+app.mount("/artifacts/screenshots", StaticFiles(directory="artifacts/screenshots"), name="screenshots")
 templates = Jinja2Templates(directory="app/web/templates")
 
 
@@ -491,6 +494,89 @@ async def stream_task_events(task_id: str, request: Request):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@app.get("/api/sessions/{session_id}/replay.m3u8")
+async def get_session_replay_m3u8(session_id: str):
+    """
+    Proxies the HLS .m3u8 playlist for Browserbase session replay.
+    Allows browser video players (hls.js) to stream the recorded session.
+    """
+    settings = get_settings()
+    api_key = settings.BROWSERBASE_API_KEY
+    if not api_key:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="BROWSERBASE_API_KEY not configured.",
+        )
+
+    # Local / mock sessions do not have CloudFront video replays
+    if session_id.startswith("sess_local_") or session_id.startswith("sess_mock_"):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Local simulation sessions do not produce cloud video replays.",
+        )
+
+    async with httpx.AsyncClient() as client:
+        try:
+            meta_res = await client.get(
+                f"https://api.browserbase.com/v1/sessions/{session_id}/replays",
+                headers={"X-BB-API-Key": api_key},
+                timeout=10.0,
+            )
+            if meta_res.status_code != 200:
+                raise HTTPException(
+                    status_code=meta_res.status_code,
+                    detail="Session replay video not ready yet on Browserbase.",
+                )
+
+            meta_data = meta_res.json()
+            pages = meta_data.get("pages", [])
+            if not pages:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="No recorded pages found in session.",
+                )
+
+            page_id = pages[0].get("pageId", "0")
+
+            pl_res = await client.get(
+                f"https://api.browserbase.com/v1/sessions/{session_id}/replays/{page_id}",
+                headers={"X-BB-API-Key": api_key},
+                timeout=10.0,
+            )
+            if pl_res.status_code != 200:
+                raise HTTPException(
+                    status_code=pl_res.status_code,
+                    detail="Failed to retrieve HLS playlist from Browserbase.",
+                )
+
+            return Response(
+                content=pl_res.text,
+                media_type="application/vnd.apple.mpegurl",
+                headers={"Cache-Control": "public, max-age=300"},
+            )
+        except HTTPException:
+            raise
+        except Exception as e:
+            logger.error(f"Error fetching session replay for {session_id}: {e}")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+@app.get("/api/screenshot/{filename}")
+async def get_screenshot(filename: str):
+    """Serves full-page dry run or submission audit screenshots."""
+    safe_name = os.path.basename(filename)
+    path = os.path.join("artifacts/screenshots", safe_name)
+    if os.path.exists(path):
+        return FileResponse(path)
+
+    doc_path = os.path.join("docs/screenshots", safe_name)
+    if os.path.exists(doc_path):
+        return FileResponse(doc_path)
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Screenshot not found.")
+
 
 
 def mask_profile(profile: MasterIdentityProfile) -> Dict[str, Any]:
