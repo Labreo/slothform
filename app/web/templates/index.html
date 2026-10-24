@@ -4,11 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title or "SlothForm — Autonomous Privacy-Preserving Form-Filling Agent" }}</title>
+  
+  <!-- Refero Styles typography: Figtree (Display), Inter (UI), IBM Plex Mono (Code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2226%22>🦥</text></svg>">
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header & Navigation -->
   <header class="app-header">
     <div class="header-content">
       <a href="/" class="brand">
@@ -28,14 +34,14 @@
   </header>
 
   <main class="container">
-    <!-- Hero -->
+    <!-- Hero Section with Ambient Lighting -->
     <section class="hero">
       <div class="hero-tag">Paper Instruments Ultramarine + Browserbase + Auth0 CIBA</div>
       <h2>Autonomous Privacy-Preserving Form Filling</h2>
       <p>Eliminate repetitive ATS job applications and international contractor tax compliance with verified identity privacy and human-in-the-loop consent.</p>
     </section>
 
-    <!-- Target Form Input Card -->
+    <!-- Target Form Input Card / Command Bar -->
     <section class="action-card">
       <form id="fill-form">
         <div class="form-grid">
@@ -195,14 +201,14 @@
   <div id="diff-inspection-modal" class="modal-overlay">
     <div class="modal-content">
       <button type="button" id="modal-close-btn" class="modal-close">&times;</button>
-      <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 700;">RFC 9396 Rich Authorization Request (RAR) Diff</h3>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+      <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; font-weight: 600; letter-spacing: -0.02em;">RFC 9396 Rich Authorization Request (RAR) Diff</h3>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; font-weight: 300;">
         Inspecting full identity attribute releases versus redacted sensitive tax and banking values protected by Auth0 Token Vault.
       </p>
 
-      <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
-        <h4 style="font-size: 0.9rem; color: var(--emerald-success); margin-bottom: 0.5rem;">✓ Permitted Release (Candidate Core & Career)</h4>
-        <ul style="font-size: 0.8rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
+      <div style="background: var(--color-abyss); border: 1px solid var(--color-inkline); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;">
+        <h4 style="font-family: var(--font-display); font-size: 0.9rem; color: var(--emerald-success); margin-bottom: 0.5rem; font-weight: 600;">✓ Permitted Release (Candidate Core & Career)</h4>
+        <ul style="font-size: 0.825rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
           <li>Full Name: Arjun Sharma (Tier: PUBLIC)</li>
           <li>Email: arjun.sharma@example.com (Tier: PUBLIC)</li>
           <li>Phone: *********3210 (Tier: SEMI_SENSITIVE, Masked)</li>
@@ -211,14 +217,16 @@
         </ul>
       </div>
 
-      <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 1rem;">
-        <h4 style="font-size: 0.9rem; color: var(--rose-danger); margin-bottom: 0.5rem;">🔒 Redacted / Context Prohibited Attributes</h4>
-        <ul style="font-size: 0.8rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
+      <div style="background: var(--color-abyss); border: 1px solid var(--color-inkline); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;">
+        <h4 style="font-family: var(--font-display); font-size: 0.9rem; color: var(--rose-danger); margin-bottom: 0.5rem; font-weight: 600;">🔒 Redacted / Context Prohibited Attributes</h4>
+        <ul style="font-size: 0.825rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
           <li>Indian PAN / SSN: Strictly blocked on ATS job applications (Tier: CRITICAL_TAX)</li>
           <li>Bank Account & Routing: Strictly blocked on ATS job applications (Tier: CRITICAL_FINANCIAL)</li>
           <li>Date of Birth: Redacted on ATS applications to prevent discrimination (Tier: CRITICAL_TAX)</li>
         </ul>
       </div>
+
+      <div id="modal-diff-content"></div>
     </div>
   </div>
 

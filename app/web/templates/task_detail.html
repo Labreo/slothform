@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title or "SlothForm — Task Detail" }}</title>
+  
+  <!-- Refero Styles typography: Figtree (Display), Inter (UI), IBM Plex Mono (Code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2226%22>🦥</text></svg>">
 </head>
@@ -19,7 +25,7 @@
         </div>
       </a>
       <div class="header-actions">
-        <a href="/" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">← New Application</a>
+        <a href="/" class="sample-chip" style="text-decoration: none;">← New Application</a>
         <div id="vault-status-badge" class="vault-badge">
           <span class="vault-indicator"></span>
           <span>Vault: Encrypted (AES-256)</span>
@@ -29,10 +35,10 @@
   </header>
 
   <main class="container">
-    <section class="hero" style="padding: 2rem 1rem 1.5rem 1rem;">
+    <section class="hero" style="padding: 2.25rem 1rem 1.75rem 1rem;">
       <div class="hero-tag">Task Telemetry: {{ task_id }}</div>
-      <h2 style="font-size: 1.75rem;">Autonomous Form Execution Telemetry</h2>
-      <p style="font-size: 0.9rem;">Tracking live execution stages, DOM extraction, Ultramarine reasoning, CIBA approval, and replay streaming.</p>
+      <h2 style="font-size: 2rem;">Autonomous Form Execution Telemetry</h2>
+      <p style="font-size: 0.95rem;">Tracking live execution stages, DOM extraction, Ultramarine reasoning, CIBA approval, and replay streaming.</p>
     </section>
 
     <!-- Hidden target-url-input for contract compliance -->
@@ -41,7 +47,7 @@
     <!-- Visual 5-Stage Progress Pipeline -->
     <section class="pipeline-card">
       <div class="pipeline-header">
-        <span class="pipeline-title">Task Pipeline [<code style="color: var(--amber-primary);">{{ task_id }}</code>]</span>
+        <span class="pipeline-title">Task Pipeline [<code style="color: var(--amber-primary); font-family: var(--font-mono);">{{ task_id }}</code>]</span>
         <span id="pipeline-status-text" class="pipeline-status">Streaming real-time events...</span>
       </div>
 
@@ -159,7 +165,7 @@
   <div id="diff-inspection-modal" class="modal-overlay">
     <div class="modal-content">
       <button type="button" id="modal-close-btn" class="modal-close">&times;</button>
-      <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 700;">Task {{ task_id }} Consent Diff</h3>
+      <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; font-weight: 600; letter-spacing: -0.02em;">Task {{ task_id }} Consent Diff</h3>
       <div id="modal-diff-content" style="font-size: 0.85rem; color: var(--text-muted);">
         <p>Verified OIDC CIBA Backchannel Authorization Details (RFC 9396).</p>
       </div>
