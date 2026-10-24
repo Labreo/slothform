@@ -93,9 +93,9 @@ Open foundation models keep your data inside an encrypted perimeter that you dir
 
 ## My Agent Session
 
-{% agent_session building-slothform-autonomous-ats-form-filling-with-browserbase-ultramarine-and-auth0-ciba-dompos %}
+{% agent_session building-slothform-autonomous-ats-form-filling-with-browserbase-ultramarine-and-auth0-ciba-g0pram %}
 
-* **Direct Transcript Link**: [Building SlothForm on DEV](https://dev.to/agent_sessions/building-slothform-autonomous-ats-form-filling-with-browserbase-ultramarine-and-auth0-ciba-dompos)
+* **Direct Transcript Link**: [Building SlothForm on DEV](https://dev.to/agent_sessions/building-slothform-autonomous-ats-form-filling-with-browserbase-ultramarine-and-auth0-ciba-g0pram)
 
 ## The Lazy Payoff
 
