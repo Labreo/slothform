@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,203 +10,338 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+  <!-- Tailwind CSS CDN + Theme Token Configuration matching Refero Styles AgentQL Design System -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            void: '#0b0c0e',
+            abyss: '#0e111b',
+            'deep-sea': '#0d172b',
+            'cobalt-panel': '#12244f',
+            'frosted-lilac': '#85a6e9',
+            'signal-blue': '#2862d7',
+            'pulse-violet': '#305fbd',
+            'aurora-purple': '#625fff',
+            'plasma-pink': '#ff7dda',
+            quartz: '#ffffff',
+            ash: '#abaebb',
+            mist: '#c7c9d1',
+            slate: '#3c3f44',
+            'obsidian-edge': '#172540',
+            inkline: '#151e32',
+            'sapphire-hairline': '#24375a',
+            'amber-primary': '#f59e0b',
+            'emerald-success': '#10b981',
+            'rose-danger': '#f43f5e',
+            'purple-tax': '#a855f7',
+            'blue-public': '#38bdf8',
+          },
+          fontFamily: {
+            display: ['Figtree', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'ui-monospace', 'Menlo', 'monospace'],
+          },
+          boxShadow: {
+            'command': '0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04)',
+            'spotlight': '0 0 35px rgba(98, 95, 255, 0.15)',
+          }
+        }
+      }
+    };
+  </script>
+
   <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22><text y=%2226%22 font-size=%2226%22>🦥</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2385a6e9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/%3E%3Cpath d='m9 12 2 2 4-4'/%3E%3C/svg%3E">
 </head>
-<body>
+<body class="bg-void text-quartz font-sans antialiased min-h-screen relative overflow-x-hidden">
   <!-- Header & Navigation -->
-  <header class="app-header">
-    <div class="header-content">
-      <a href="/" class="brand">
-        <span class="brand-logo">🦥</span>
-        <div class="brand-text">
-          <h1>SlothForm</h1>
-          <span>Autonomous Form Filling Agent</span>
+  <header class="app-header sticky top-0 z-50 backdrop-blur-md bg-void/85 border-b border-obsidian-edge">
+    <div class="header-content max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between py-3">
+      <a href="/" class="brand flex items-center gap-3 no-underline text-quartz group">
+        <span class="brand-logo flex items-center justify-center w-10 h-10 rounded-xl bg-cobalt-panel/70 border border-sapphire-hairline shadow-sm shadow-aurora-purple/20 group-hover:border-frosted-lilac transition-all">
+          <svg class="w-5 h-5 text-frosted-lilac" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </span>
+        <div class="brand-text flex flex-col">
+          <h1 class="font-display font-semibold text-lg tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-mist leading-tight">SlothForm</h1>
+          <span class="text-[10px] font-mono tracking-widest text-frosted-lilac uppercase font-medium">Autonomous Form Agent</span>
         </div>
       </a>
-      <div class="header-actions">
-        <div id="vault-status-badge" class="vault-badge">
-          <span class="vault-indicator"></span>
+      <div class="header-actions flex items-center gap-3">
+        <div id="vault-status-badge" class="vault-badge inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-deep-sea border border-sapphire-hairline text-xs font-mono text-ash shadow-sm">
+          <span class="vault-indicator inline-block w-2 h-2 rounded-full bg-emerald-success shadow-[0_0_8px_#10b981]"></span>
+          <svg class="w-3.5 h-3.5 text-emerald-success shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
           <span>Vault: Encrypted (AES-256)</span>
         </div>
       </div>
     </div>
   </header>
 
-  <main class="container">
+  <main class="container max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-16 relative z-10">
     <!-- Hero Section with Ambient Lighting -->
-    <section class="hero">
-      <div class="hero-tag">Paper Instruments Ultramarine + Browserbase + Auth0 CIBA</div>
-      <h2>Autonomous Privacy-Preserving Form Filling</h2>
-      <p>Eliminate repetitive ATS job applications and international contractor tax compliance with verified identity privacy and human-in-the-loop consent.</p>
+    <section class="hero text-center py-10 md:py-14 relative">
+      <div class="hero-tag inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cobalt-panel border border-sapphire-hairline text-frosted-lilac text-xs font-mono tracking-wider uppercase mb-5 shadow-sm">
+        <svg class="w-3.5 h-3.5 text-frosted-lilac shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+        <span>Paper Instruments Ultramarine + Browserbase + Auth0 CIBA</span>
+      </div>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-semibold tracking-tight text-quartz max-w-3xl mx-auto leading-tight mb-4">
+        Autonomous Privacy-Preserving Form Filling
+      </h2>
+      <p class="text-ash text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light leading-relaxed">
+        Eliminate repetitive ATS job applications and international contractor tax compliance with verified identity privacy and human-in-the-loop consent.
+      </p>
     </section>
 
     <!-- Target Form Input Card / Command Bar -->
-    <section class="action-card">
+    <section class="action-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 mb-8 shadow-command">
       <form id="fill-form">
-        <div class="form-grid">
-          <div class="input-group">
-            <span class="input-icon">🔗</span>
+        <div class="form-grid flex flex-col md:flex-row items-stretch md:items-center gap-3">
+          <div class="input-group relative flex-1 flex items-center bg-abyss border border-inkline rounded-full px-4 py-2.5 focus-within:border-pulse-violet focus-within:ring-2 focus-within:ring-aurora-purple/20 transition-all">
+            <span class="input-icon shrink-0 mr-3 text-ash">
+              <svg class="w-4 h-4 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+              </svg>
+            </span>
             <input 
               type="url" 
               id="target-url-input" 
-              class="url-input" 
+              class="url-input w-full bg-transparent border-none text-quartz placeholder-ash/50 text-sm focus:outline-none font-sans" 
               placeholder="Paste job application URL (Greenhouse, Lever, Ashby) or W-8BEN form..." 
               required
             >
           </div>
 
           <!-- Dry-Run Safety Toggle -->
-          <div class="safety-toggle-wrapper">
-            <span id="dry-run-status-text" class="toggle-label">DRY-RUN GUARD: ON</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="dry-run-toggle" checked>
+          <div class="safety-toggle-wrapper flex items-center justify-between md:justify-start gap-3 bg-abyss border border-inkline rounded-full px-4 py-2.5">
+            <span id="dry-run-status-text" class="toggle-label text-xs font-mono font-medium tracking-wide text-amber-primary">DRY-RUN GUARD: ON</span>
+            <label class="toggle-switch relative inline-block w-10 h-5">
+              <input type="checkbox" id="dry-run-toggle" checked class="opacity-0 w-0 h-0">
               <span class="toggle-slider"></span>
             </label>
           </div>
 
-          <button type="submit" id="submit-btn" class="btn-primary">
-            <span>⚡ Start Autonomous Fill</span>
+          <button type="submit" id="submit-btn" class="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 bg-quartz text-void font-display font-medium text-sm hover:bg-mist hover:shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-md shrink-0">
+            <svg class="w-4 h-4 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span>Start Autonomous Fill</span>
           </button>
         </div>
 
-        <div class="quick-samples">
-          <span>Quick Test:</span>
-          <button type="button" class="sample-chip" data-url="https://boards.greenhouse.io/stripe/jobs/456789">Greenhouse (Stripe)</button>
-          <button type="button" class="sample-chip" data-url="https://jobs.lever.co/postman/senior-backend-engineer">Lever (Postman)</button>
-          <button type="button" class="sample-chip" data-url="https://jobs.ashbyhq.com/openai/systems-engineer">Ashby (OpenAI)</button>
-          <button type="button" class="sample-chip" data-url="https://compliance.example.com/forms/w-8ben/onboarding">IRS Form W-8BEN</button>
+        <div class="quick-samples flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-inkline text-xs text-ash">
+          <span class="font-medium text-ash mr-1">Quick Test:</span>
+          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://boards.greenhouse.io/stripe/jobs/456789">Greenhouse (Stripe)</button>
+          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://jobs.lever.co/postman/senior-backend-engineer">Lever (Postman)</button>
+          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://jobs.ashbyhq.com/openai/systems-engineer">Ashby (OpenAI)</button>
+          <button type="button" class="sample-chip rounded-full px-3 py-1 bg-abyss border border-inkline text-ash hover:border-sapphire-hairline hover:text-quartz hover:bg-cobalt-panel text-xs transition-all cursor-pointer" data-url="https://compliance.example.com/forms/w-8ben/onboarding">IRS Form W-8BEN</button>
         </div>
       </form>
     </section>
 
     <!-- Visual 5-Stage Progress Pipeline -->
-    <section class="pipeline-card">
-      <div class="pipeline-header">
-        <span class="pipeline-title">Execution Pipeline</span>
-        <span id="pipeline-status-text" class="pipeline-status">Standby — Ready for target dispatch</span>
+    <section class="pipeline-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 mb-8 shadow-command">
+      <div class="pipeline-header flex items-center justify-between mb-4">
+        <span class="pipeline-title font-display text-base md:text-lg font-semibold text-quartz tracking-tight">Execution Pipeline</span>
+        <span id="pipeline-status-text" class="pipeline-status font-mono text-xs text-amber-primary bg-amber-surface border border-amber-primary/20 px-3 py-1 rounded-full">Standby — Ready for target dispatch</span>
       </div>
 
       <!-- Animated Progress Bar -->
-      <div class="progress-bar-container">
-        <div id="stage-progress-bar" class="progress-bar-fill"></div>
+      <div class="progress-bar-container w-full h-2 bg-abyss rounded-full overflow-hidden mb-6 border border-inkline">
+        <div id="stage-progress-bar" class="progress-bar-fill h-full w-0 transition-all duration-300"></div>
       </div>
 
       <!-- 5 Visual Stages -->
-      <div class="pipeline-stages">
-        <div id="stage-step-1" class="stage-step">
-          <div class="stage-icon">☁️</div>
-          <div class="stage-title">1. Provisioning</div>
-          <div class="stage-desc">Browserbase cloud sandbox & stealth proxies</div>
-          <span class="stage-badge">10%</span>
+      <div class="pipeline-stages grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
+        <div id="stage-step-1" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+            <svg class="w-5 h-5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+          </div>
+          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">1. Provisioning</div>
+          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Browserbase cloud sandbox & stealth proxies</div>
+          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">10%</span>
         </div>
 
-        <div id="stage-step-2" class="stage-step">
-          <div class="stage-icon">🔍</div>
-          <div class="stage-title">2. DOM Schema</div>
-          <div class="stage-desc">Interactive inputs, selects, & frames</div>
-          <span class="stage-badge">30%</span>
+        <div id="stage-step-2" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+            <svg class="w-5 h-5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.3-4.3"/>
+            </svg>
+          </div>
+          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">2. DOM Schema</div>
+          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Interactive inputs, selects, & frames</div>
+          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">30%</span>
         </div>
 
-        <div id="stage-step-3" class="stage-step">
-          <div class="stage-icon">🧠</div>
-          <div class="stage-title">3. Ultramarine</div>
-          <div class="stage-desc">Paper Instruments grounded reasoning</div>
-          <span class="stage-badge">50%</span>
+        <div id="stage-step-3" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+            <svg class="w-5 h-5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="16" height="16" x="4" y="4" rx="2"/>
+              <rect width="6" height="6" x="9" y="9" rx="1"/>
+              <path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>
+            </svg>
+          </div>
+          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">3. Ultramarine</div>
+          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Paper Instruments grounded reasoning</div>
+          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">50%</span>
         </div>
 
-        <div id="stage-step-4" class="stage-step">
-          <div class="stage-icon">🔐</div>
-          <div class="stage-title">4. Auth0 CIBA</div>
-          <div class="stage-desc">OIDC backchannel human approval</div>
-          <span class="stage-badge">70%</span>
+        <div id="stage-step-4" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+            <svg class="w-5 h-5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/>
+              <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">4. Auth0 CIBA</div>
+          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">OIDC backchannel human approval</div>
+          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">70%</span>
         </div>
 
-        <div id="stage-step-5" class="stage-step">
-          <div class="stage-icon">🛡️</div>
-          <div class="stage-title">5. Form Fill & Guard</div>
-          <div class="stage-desc">Playwright execution & amber outline</div>
-          <span class="stage-badge">90-100%</span>
+        <div id="stage-step-5" class="stage-step bg-abyss border border-inkline rounded-xl p-4 text-center flex flex-col justify-between transition-all hover:border-sapphire-hairline">
+          <div class="stage-icon flex items-center justify-center w-10 h-10 rounded-full bg-deep-sea border border-inkline mx-auto mb-2 text-ash transition-all">
+            <svg class="w-5 h-5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </div>
+          <div class="stage-title font-display text-sm font-semibold text-quartz mb-1">5. Form Fill & Guard</div>
+          <div class="stage-desc text-xs text-ash/80 font-light leading-relaxed mb-3">Playwright execution & amber outline</div>
+          <span class="stage-badge inline-block font-mono text-[11px] font-semibold text-ash bg-deep-sea border border-obsidian-edge px-2.5 py-0.5 rounded-full mx-auto">90-100%</span>
         </div>
       </div>
     </section>
 
     <!-- Interactive Auth0 CIBA Consent Decision Card -->
-    <section id="ciba-consent-card" class="consent-decision-card" style="display: none;">
-      <div class="consent-header">
-        <div class="consent-title-group">
-          <span class="consent-badge-icon">🔐</span>
+    <section id="ciba-consent-card" class="consent-decision-card bg-deep-sea border border-amber-primary/50 rounded-2xl p-5 md:p-6 mb-8 shadow-xl shadow-amber-primary/5" style="display: none;">
+      <div class="consent-header flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+        <div class="consent-title-group flex items-center gap-3">
+          <span class="consent-badge-icon flex items-center justify-center w-10 h-10 rounded-xl bg-amber-primary/10 border border-amber-primary/30 text-amber-primary shrink-0">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
           <div>
-            <h3 class="consent-title">Auth0 CIBA Consent Required (RFC 9396 RAR)</h3>
-            <p class="consent-subtitle">Human-in-the-loop authorization requested for Candidate Identity Release.</p>
+            <h3 class="consent-title font-display text-base md:text-lg font-semibold text-quartz leading-snug">Auth0 CIBA Consent Required (RFC 9396 RAR)</h3>
+            <p class="consent-subtitle text-xs text-ash">Human-in-the-loop authorization requested for Candidate Identity Release.</p>
           </div>
         </div>
-        <div id="ciba-timer-badge" class="consent-status-badge">Awaiting Candidate Decision</div>
+        <div id="ciba-timer-badge" class="consent-status-badge font-mono text-xs font-semibold text-amber-primary px-3 py-1 rounded-full bg-amber-primary/10 border border-amber-primary/20 shrink-0 self-start sm:self-auto">Awaiting Candidate Decision</div>
       </div>
 
-      <div class="consent-attributes-grid">
-        <div class="consent-attr-box consent-permitted">
-          <div class="attr-box-title">✓ Permitted Release (Candidate Core & Career)</div>
-          <p class="attr-box-desc">Full Name, Email, Masked Phone, Tailored Experience Essay, Synthetic Resume PDF.</p>
+      <div class="consent-attributes-grid grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+        <div class="consent-attr-box consent-permitted bg-abyss border border-inkline border-l-4 border-l-emerald-success rounded-xl p-4">
+          <div class="attr-box-title flex items-center gap-2 font-display text-xs font-semibold text-emerald-success uppercase tracking-wider mb-1.5">
+            <svg class="w-4 h-4 shrink-0 text-emerald-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span>Permitted Release (Candidate Core & Career)</span>
+          </div>
+          <p class="attr-box-desc text-xs text-ash leading-relaxed">Full Name, Email, Masked Phone, Tailored Experience Essay, Synthetic Resume PDF.</p>
         </div>
-        <div class="consent-attr-box consent-prohibited">
-          <div class="attr-box-title">🔒 Protected & Withheld (Auth0 Token Vault)</div>
-          <p class="attr-box-desc">Indian PAN / SSN, Banking details, Date of Birth strictly redacted from ATS release.</p>
+        <div class="consent-attr-box consent-prohibited bg-abyss border border-inkline border-l-4 border-l-rose-danger rounded-xl p-4">
+          <div class="attr-box-title flex items-center gap-2 font-display text-xs font-semibold text-rose-danger uppercase tracking-wider mb-1.5">
+            <svg class="w-4 h-4 shrink-0 text-rose-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>Protected & Withheld (Auth0 Token Vault)</span>
+          </div>
+          <p class="attr-box-desc text-xs text-ash leading-relaxed">Indian PAN / SSN, Banking details, Date of Birth strictly redacted from ATS release.</p>
         </div>
       </div>
 
-      <div class="consent-actions-row">
-        <button type="button" id="ciba-approve-btn" class="btn-primary btn-consent-approve">
-          <span>✓ Authorize Identity Release</span>
+      <div class="consent-actions-row flex flex-wrap items-center gap-3">
+        <button type="button" id="ciba-approve-btn" class="btn-primary btn-consent-approve inline-flex items-center gap-2 rounded-full px-5 py-2.5 bg-quartz text-void font-display font-medium text-xs hover:bg-mist transition-all active:scale-95 shadow-md">
+          <svg class="w-4 h-4 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Authorize Identity Release</span>
         </button>
-        <button type="button" id="ciba-reject-btn" class="btn-ghost btn-consent-reject">
-          <span>✗ Deny Consent & Halt</span>
+        <button type="button" id="ciba-reject-btn" class="btn-ghost btn-consent-reject inline-flex items-center gap-2 rounded-full px-5 py-2.5 border border-rose-danger/40 text-rose-danger font-display font-medium text-xs hover:bg-rose-danger/10 transition-all active:scale-95">
+          <svg class="w-4 h-4 text-rose-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          <span>Deny Consent & Halt</span>
         </button>
-        <button type="button" id="ciba-inspect-modal-btn" class="btn-ghost">
-          <span>Inspect Full Diff ↗</span>
+        <button type="button" id="ciba-inspect-modal-btn" class="btn-ghost inline-flex items-center gap-1.5 rounded-full px-4 py-2.5 border border-obsidian-edge text-ash font-display font-medium text-xs hover:border-sapphire-hairline hover:text-quartz transition-all">
+          <span>Inspect Full Diff</span>
+          <svg class="w-3.5 h-3.5 text-ash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
         </button>
       </div>
     </section>
 
     <!-- Dashboard Panels: Replay and Field Diff -->
-    <section class="dashboard-grid">
+    <section class="dashboard-grid grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
       <!-- Browserbase Replay Container -->
-      <div class="panel-card">
-        <div class="panel-title">
-          <div class="panel-title-text">
-            <span>Browserbase Cloud Session Replay</span>
-            <span id="replay-live-dot" class="live-dot" style="display: none;"></span>
+      <div class="panel-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 shadow-command flex flex-col">
+        <div class="panel-title flex items-center justify-between mb-4">
+          <div class="panel-title-text flex items-center gap-2.5">
+            <span class="font-display text-sm md:text-base font-semibold text-quartz tracking-tight">Browserbase Cloud Session Replay</span>
+            <span id="replay-live-dot" class="live-dot inline-block w-2 h-2 rounded-full bg-emerald-success shadow-[0_0_8px_#10b981]" style="display: none;"></span>
           </div>
-          <a id="replay-external-link" href="#" target="_blank" class="replay-link"></a>
+          <a id="replay-external-link" href="#" target="_blank" class="replay-link font-mono text-xs text-signal-blue hover:underline"></a>
         </div>
-        <div id="replay-container" class="replay-container crt-screen">
-          <iframe id="browserbase-replay-frame" class="replay-frame" src="" style="display: none;" allowfullscreen></iframe>
-          <div id="replay-placeholder" class="replay-placeholder">
-            <span style="font-size: 2.5rem;">🎬</span>
-            <p>Remote browser session replay will stream here once the task executes.</p>
+        <div id="replay-container" class="replay-container crt-screen w-full aspect-video bg-black rounded-xl border border-inkline overflow-hidden relative flex items-center justify-center">
+          <iframe id="browserbase-replay-frame" class="replay-frame w-full h-full border-none" src="" style="display: none;" allowfullscreen></iframe>
+          <div id="replay-placeholder" class="replay-placeholder flex flex-col items-center justify-center p-8 text-center text-ash">
+            <svg class="w-12 h-12 text-ash/40 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="20" height="14" x="2" y="3" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+              <polygon points="10 8 16 11 10 14 10 8" fill="currentColor" fill-opacity="0.3"/>
+            </svg>
+            <p class="text-xs text-ash/80 max-w-sm">Remote browser session replay will stream here once the task executes.</p>
           </div>
         </div>
       </div>
 
       <!-- Field Diff Summary -->
-      <div class="panel-card">
-        <div class="panel-title">
-          <span>Privacy Diff & Field Consent</span>
-          <button type="button" id="view-diff-btn" class="btn-ghost" style="color: var(--amber-primary);">Expand Full Diff ↗</button>
+      <div class="panel-card bg-deep-sea border border-obsidian-edge rounded-2xl p-5 md:p-6 shadow-command flex flex-col">
+        <div class="panel-title flex items-center justify-between mb-4">
+          <span class="font-display text-sm md:text-base font-semibold text-quartz tracking-tight">Privacy Diff & Field Consent</span>
+          <button type="button" id="view-diff-btn" class="btn-ghost inline-flex items-center gap-1.5 text-xs text-amber-primary hover:underline" style="color: var(--amber-primary);">
+            <span>Expand Full Diff</span>
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </button>
         </div>
-        <div class="diff-table-wrapper">
-          <table class="diff-table">
+        <div class="diff-table-wrapper overflow-x-auto rounded-xl border border-inkline flex-1">
+          <table class="diff-table w-full text-left text-xs bg-abyss">
             <thead>
-              <tr>
-                <th>Field Attribute</th>
-                <th>Sensitivity Tier</th>
-                <th>Populated / Masked Value</th>
-                <th>Status</th>
+              <tr class="bg-void/50 border-b border-obsidian-edge text-frosted-lilac uppercase text-[10px] font-mono tracking-wider">
+                <th class="p-3">Field Attribute</th>
+                <th class="p-3">Sensitivity Tier</th>
+                <th class="p-3">Populated / Masked Value</th>
+                <th class="p-3">Status</th>
               </tr>
             </thead>
             <tbody id="diff-tbody">
               <tr>
-                <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                <td colspan="4" class="p-6 text-center text-ash/60">
                   Awaiting form analysis... Start a fill task to inspect candidate attribute releases.
                 </td>
               </tr>
@@ -217,38 +352,48 @@
     </section>
 
     <!-- Real-Time Telemetry Terminal Feed -->
-    <section class="telemetry-card">
-      <div class="telemetry-header">
-        <div class="terminal-dots">
-          <span class="dot dot-red"></span>
-          <span class="dot dot-yellow"></span>
-          <span class="dot dot-green"></span>
+    <section class="telemetry-card bg-[#07080d] border border-obsidian-edge rounded-2xl p-5 font-mono shadow-command">
+      <div class="telemetry-header flex items-center justify-between mb-3 pb-3 border-b border-inkline">
+        <div class="terminal-dots flex items-center gap-1.5">
+          <span class="dot dot-red w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+          <span class="dot dot-yellow w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+          <span class="dot dot-green w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
         </div>
-        <span class="telemetry-title">Server-Sent Events (SSE) Live Telemetry</span>
-        <span style="color: var(--text-dim); font-size: 0.7rem;">/api/tasks/{task_id}/events</span>
+        <span class="telemetry-title text-xs uppercase tracking-wider text-ash font-medium">Server-Sent Events (SSE) Live Telemetry</span>
+        <span class="text-ash/50 text-[11px]">/api/tasks/{task_id}/events</span>
       </div>
-      <div id="terminal-logs" class="terminal-logs">
-        <div class="log-entry">
-          <span class="log-time">[Ready]</span>
-          <span class="log-stage">&lt;IDLE&gt;</span>
-          <span class="log-msg">SlothForm telemetry daemon active. Ready to ingest application URLs.</span>
+      <div id="terminal-logs" class="terminal-logs h-40 overflow-y-auto text-xs leading-relaxed pr-2">
+        <div class="log-entry flex items-start gap-3 mb-1">
+          <span class="log-time text-ash/50 shrink-0">[Ready]</span>
+          <span class="log-stage text-frosted-lilac shrink-0">&lt;IDLE&gt;</span>
+          <span class="log-msg text-quartz">SlothForm telemetry daemon active. Ready to ingest application URLs.</span>
         </div>
       </div>
     </section>
   </main>
 
   <!-- Diff Inspection Modal -->
-  <div id="diff-inspection-modal" class="modal-overlay">
-    <div class="modal-content">
-      <button type="button" id="modal-close-btn" class="modal-close">&times;</button>
-      <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem; font-weight: 600; letter-spacing: -0.02em;">RFC 9396 Rich Authorization Request (RAR) Diff</h3>
-      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem; font-weight: 300;">
+  <div id="diff-inspection-modal" class="modal-overlay fixed inset-0 z-50 bg-void/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="modal-content bg-deep-sea border border-sapphire-hairline rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 relative shadow-2xl">
+      <button type="button" id="modal-close-btn" class="modal-close absolute top-4 right-4 w-8 h-8 rounded-full border border-obsidian-edge flex items-center justify-center text-ash hover:text-white hover:border-frosted-lilac transition-all">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <h3 class="font-display text-lg font-semibold text-quartz mb-1.5 tracking-tight">RFC 9396 Rich Authorization Request (RAR) Diff</h3>
+      <p class="text-xs text-ash font-light mb-5">
         Inspecting full identity attribute releases versus redacted sensitive tax and banking values protected by Auth0 Token Vault.
       </p>
 
-      <div style="background: var(--color-abyss); border: 1px solid var(--color-inkline); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;">
-        <h4 style="font-family: var(--font-display); font-size: 0.9rem; color: var(--emerald-success); margin-bottom: 0.5rem; font-weight: 600;">✓ Permitted Release (Candidate Core & Career)</h4>
-        <ul style="font-size: 0.825rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
+      <div class="bg-abyss border border-inkline border-l-4 border-l-emerald-success rounded-xl p-4 mb-3">
+        <h4 class="font-display text-xs font-semibold text-emerald-success uppercase tracking-wider mb-2 flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0 text-emerald-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Permitted Release (Candidate Core & Career)</span>
+        </h4>
+        <ul class="text-xs text-ash list-inside space-y-1">
           <li>Full Name: Arjun Sharma (Tier: PUBLIC)</li>
           <li>Email: arjun.sharma@example.com (Tier: PUBLIC)</li>
           <li>Phone: *********3210 (Tier: SEMI_SENSITIVE, Masked)</li>
@@ -257,9 +402,15 @@
         </ul>
       </div>
 
-      <div style="background: var(--color-abyss); border: 1px solid var(--color-inkline); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;">
-        <h4 style="font-family: var(--font-display); font-size: 0.9rem; color: var(--rose-danger); margin-bottom: 0.5rem; font-weight: 600;">🔒 Redacted / Context Prohibited Attributes</h4>
-        <ul style="font-size: 0.825rem; color: var(--text-muted); list-style-position: inside; line-height: 1.8;">
+      <div class="bg-abyss border border-inkline border-l-4 border-l-rose-danger rounded-xl p-4 mb-4">
+        <h4 class="font-display text-xs font-semibold text-rose-danger uppercase tracking-wider mb-2 flex items-center gap-2">
+          <svg class="w-4 h-4 shrink-0 text-rose-danger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Redacted / Context Prohibited Attributes</span>
+        </h4>
+        <ul class="text-xs text-ash list-inside space-y-1">
           <li>Indian PAN / SSN: Strictly blocked on ATS job applications (Tier: CRITICAL_TAX)</li>
           <li>Bank Account & Routing: Strictly blocked on ATS job applications (Tier: CRITICAL_FINANCIAL)</li>
           <li>Date of Birth: Redacted on ATS applications to prevent discrimination (Tier: CRITICAL_TAX)</li>
@@ -268,10 +419,21 @@
 
       <div id="modal-diff-content"></div>
 
-      <div class="modal-footer-actions" id="modal-consent-actions" style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: flex-end; border-top: 1px solid var(--color-inkline); padding-top: 1.25rem;">
-        <button type="button" id="modal-close-action-btn" class="btn-ghost" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">Close</button>
-        <button type="button" id="modal-reject-btn" class="btn-ghost" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; color: var(--rose-danger); border-color: rgba(244, 63, 94, 0.4); display: none;">✗ Deny Release</button>
-        <button type="button" id="modal-approve-btn" class="btn-primary" style="padding: 0.6rem 1.25rem; font-size: 0.85rem; display: none;">✓ Approve Release</button>
+      <div class="modal-footer-actions flex items-center justify-end gap-3 mt-6 pt-4 border-t border-inkline" id="modal-consent-actions">
+        <button type="button" id="modal-close-action-btn" class="btn-ghost rounded-full px-4 py-2 border border-obsidian-edge text-ash hover:text-white text-xs transition-all">Close</button>
+        <button type="button" id="modal-reject-btn" class="btn-ghost inline-flex items-center gap-1.5 rounded-full px-4 py-2 border border-rose-danger/40 text-rose-danger text-xs hover:bg-rose-danger/10 transition-all" style="display: none;">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          <span>Deny Release</span>
+        </button>
+        <button type="button" id="modal-approve-btn" class="btn-primary inline-flex items-center gap-1.5 rounded-full px-4 py-2 bg-quartz text-void font-medium text-xs hover:bg-mist transition-all shadow-md" style="display: none;">
+          <svg class="w-3.5 h-3.5 text-void" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>Approve Release</span>
+        </button>
       </div>
     </div>
   </div>

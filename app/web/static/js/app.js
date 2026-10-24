@@ -376,8 +376,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function handleCompletion(taskId, result, isDryRun) {
     if (statusText) {
       statusText.textContent = isDryRun
-        ? "✓ DRY_RUN_SUCCESS — Halting safely before submission"
-        : "✓ SUBMITTED — Application filed successfully";
+        ? "DRY_RUN_SUCCESS — Halting safely before submission"
+        : "SUBMITTED — Application filed successfully";
       statusText.style.color = "var(--emerald-success)";
     }
 
@@ -397,7 +397,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (cibaConsentCard) {
       if (cibaTimerBadge) {
-        cibaTimerBadge.textContent = "✓ Identity Released (RFC 9396 Approved)";
+        cibaTimerBadge.textContent = "Identity Released (RFC 9396 Approved)";
         cibaTimerBadge.style.color = "var(--emerald-success)";
       }
     }
@@ -419,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const replayLink = document.getElementById("replay-external-link");
     if (replayLink) {
       replayLink.href = replayUrl;
-      replayLink.textContent = "Open in Browserbase ↗";
+      replayLink.textContent = "Open in Browserbase";
     }
 
     // Populate dynamic field diff table
@@ -445,7 +445,7 @@ document.addEventListener("DOMContentLoaded", () => {
       diffTbody.innerHTML = `
         <tr>
           <td colspan="4" style="text-align: center; color: ${stage === 'REFUSED' ? 'var(--amber-primary)' : 'var(--rose-danger)'}; padding: 1.5rem;">
-            ⚠️ Pipeline halted [${escapeHtml(stage)}]: ${escapeHtml(errorMessage)}
+            Pipeline halted [${escapeHtml(stage)}]: ${escapeHtml(errorMessage)}
           </td>
         </tr>
       `;

@@ -590,8 +590,20 @@ input:checked + .toggle-slider:before {
 }
 
 .stage-icon {
-  font-size: 1.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 0.6rem;
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+.stage-step.active .stage-icon {
+  color: var(--color-frosted-lilac);
+}
+
+.stage-step.completed .stage-icon {
+  color: var(--emerald-success);
 }
 
 .stage-title {
@@ -1066,7 +1078,10 @@ input:checked + .toggle-slider:before {
 }
 
 .url-icon {
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
 }
 
 .target-url-link {
@@ -1130,7 +1145,10 @@ input:checked + .toggle-slider:before {
 }
 
 .consent-badge-icon {
-  font-size: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--amber-primary);
 }
 
 .consent-title {
